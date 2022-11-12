@@ -25,7 +25,8 @@ export interface FilterOption {
 }
 
 export interface Trade {
-  id: number;
+  purchase_uuid: string;
+  sale_uuid?: string;
   purchase_tx: string;
   purchase_type: string;
   sale_type?: string;

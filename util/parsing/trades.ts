@@ -9,7 +9,6 @@ export function trades_parse(transactions: Transaction[]) {
   const cancels: Transaction[] = [];
   const opensea_expenses: Transaction[] = [];
   const startTime = performance.now();
-  let count = 1;
   transactions.forEach((tx) => {
     // if a transaction is a tx type, find its corresponding sale
     if (purchase_type.find((type) => type === tx.type) != undefined) {
@@ -25,7 +24,8 @@ export function trades_parse(transactions: Transaction[]) {
       }
 
       const trade: Trade = {
-        id: count,
+        purchase_uuid: `${tx.tx_hash}-${tx.collection_address}-${tx.token_ID}`,
+        sale_uuid: match != undefined ? `${match.tx_hash}-${tx.collection_address}-${tx.token_ID}` : undefined,
         purchase_type: tx.type,
         purchase_tx: tx.tx_hash,
         sale_type: match != undefined ? match.type : undefined,
@@ -50,8 +50,7 @@ export function trades_parse(transactions: Transaction[]) {
         // TODO notes: store.notes.find(n => n.noteId == `${tx.tx_hash}_${tx.token_ID}`)?.entry,
         contract: tx.contract,
       };
-      count++;
-      trades.push(trade);
+      if(trade.contract == "ERC721") trades.push(trade);
     }
     else if(tx.type == tx_type.LISTING){
       listings.push(tx);

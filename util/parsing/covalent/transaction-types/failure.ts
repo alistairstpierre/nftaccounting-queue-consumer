@@ -11,10 +11,11 @@ export function is_failed_transaction(item: CovalentItem): boolean {
 }
 
 export function create_failed_transaction(item: CovalentItem): Transaction {
+    const fees = typeof item.fees_paid == 'string' ? parseInt(item.fees_paid) : item.fees_paid
     return create_transaction(
         tx_type.FAILURE, 
         item.tx_hash, 
         item.block_signed_at,
-        typeof item.fees_paid == 'string' ? parseInt(item.fees_paid) : item.fees_paid,
+        fees != null ? fees : 0,
     );
 }

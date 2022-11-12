@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Trade" ALTER COLUMN "sale" DROP NOT NULL,
+ALTER COLUMN "feeRoyalty" DROP NOT NULL;
