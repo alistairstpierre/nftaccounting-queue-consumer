@@ -11,7 +11,7 @@ export interface Transaction {
   token_ID?: string;
   market_fee?: number;
   royalty_fee?: number;
-  contract?: "ERC721" | "ERC1155";
+  contract?: ContractType;
 }
 
 export interface GroupedCollection {
@@ -25,25 +25,25 @@ export interface FilterOption {
 }
 
 export interface Trade {
-  purchase_uuid: string;
-  sale_uuid?: string;
-  purchase_tx: string;
-  purchase_type: string;
-  sale_type?: string;
-  sale_tx?: string;
-  img_url?: string;
-  token_id?: string;
-  project_address?: string;
-  project?: string;
+  purchaseUUID: string;
+  saleUUID?: string;
+  purchaseTransaction: string;
+  purchaseType: string;
+  saleType?: string;
+  SaleTransaction?: string;
+  imgUrl?: string;
+  tokenId?: string;
+  projectAddress?: string;
+  projectName?: string;
   date: string;
   cost?: number;
   sale?: number;
-  fee_gas?: number;
-  fee_exchange?: number;
-  fee_royalty?: number;
+  feeGas?: number;
+  feeExchange?: number;
+  feeRoyalty?: number;
   profit: number;
   notes?: string;
-  contract?: "ERC721" | "ERC1155";
+  contract?: ContractType;
 }
 
 export interface TradeDisplay {

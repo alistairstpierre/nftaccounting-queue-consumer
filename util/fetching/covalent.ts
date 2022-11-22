@@ -37,6 +37,18 @@ const fetch_1 = async (page: number) => {
       if (!data.data.pagination.has_more) {
         global.is_fetching_covalent = false;
       }
+      if(global.request_date != null){
+        const dateFiltered = [];
+        for(const item of data.data.items){
+          if(new Date(item.block_signed_at) <= global.request_date){
+            global.is_fetching_covalent = false;
+          } else {
+            dateFiltered.push(item);
+          }
+        };
+        return parse(dateFiltered);
+      }
+      // make a new array from the data and return that.
       return parse(data.data.items);
     });
 

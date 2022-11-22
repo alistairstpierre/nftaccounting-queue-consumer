@@ -12,22 +12,6 @@ const RMQConsumer = new Broker().init();
 const pipeline = promisify(require("stream").pipeline);
 const prisma = new PrismaClient();
 
-async function main() {
-  // ... you will write your Prisma Client queries here
-  const allUsers = await prisma.user.findMany();
-  console.log(allUsers);
-}
-
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
-
 /**
  * Process 1:1 message and stores in db, also processes group messages 1 by 1
  * @param {String} payload - message in json string format
@@ -41,7 +25,10 @@ const handleRequest = async (payload: any, ack: any) => {
     global.is_fetching_opensea = false;
     global.is_parsing_covalent = false;
     global.alchemy_call_amount = 0;
-    global.walletAddress = payload.content.toString().toLowerCase();
+    const payloadData = JSON.parse(payload.content.toString());
+    global.walletAddress = payloadData.wallet.toLowerCase();
+    global.request_date = await findStartDate();
+    console.log(global.request_date);
     let startTime = performance.now();
     const added: any = await Promise.all([get_covalent_data(), get_moralis_data()]);
     let endTime = performance.now();
@@ -56,32 +43,33 @@ const handleRequest = async (payload: any, ack: any) => {
       });
     });
     added[1].forEach((item: any) => {
-      item.result.forEach((element: any) => {
+      item.forEach((element: any) => {
         moralis.push(element);
       });
     });
     const preParse = moralis_parse(moralis, covalent);
     const data = trades_parse(preParse);
+    
     const tradesWithUrls = await get_image_urls(data.trades);
     const mappedTrades = tradesWithUrls.map((trade: Trade) => {
       return {
-        purchaseUUID: trade.purchase_uuid,
-        saleUUID: trade.sale_uuid,
+        purchaseUUID: trade.purchaseUUID,
+        saleUUID: trade.saleUUID,
         date: trade.date,
-        purchaseType: trade.purchase_type,
-        purchaseTransaction: trade.purchase_tx,
-        saleType: trade.sale_type,
-        SaleTransaction: trade.sale_tx,
-        imgUrl: trade.img_url,
-        tokenId: trade.token_id,
+        purchaseType: trade.purchaseType,
+        purchaseTransaction: trade.purchaseTransaction,
+        saleType: trade.saleType,
+        SaleTransaction: trade.SaleTransaction,
+        imgUrl: trade.imgUrl,
+        tokenId: trade.tokenId,
         contract: trade.contract,
-        projectAddress: trade.project_address,
-        projectName: trade.project,
+        projectAddress: trade.projectAddress,
+        projectName: trade.projectName,
         cost: trade.cost,
         sale: trade.sale,
-        feeGas: trade.fee_gas,
-        feeExchange: trade.fee_exchange,
-        feeRoyalty: trade.fee_royalty,
+        feeGas: trade.feeGas,
+        feeExchange: trade.feeExchange,
+        feeRoyalty: trade.feeRoyalty,
         profit: trade.profit,
         walletAddress: global.walletAddress,
       };
@@ -95,9 +83,9 @@ const handleRequest = async (payload: any, ack: any) => {
         walletAddress: global.walletAddress,
       }
     });
-    console.log("updating db");
     startTime = performance.now();
-    await updateDB({mappedTrades, mapped_expenses})
+    if(mappedTrades.length > 0 || mapped_expenses.length > 0) {
+      await updateDB({mappedTrades, mapped_expenses})
       .then(async () => {
         await prisma.$disconnect();
       })
@@ -106,14 +94,47 @@ const handleRequest = async (payload: any, ack: any) => {
         await prisma.$disconnect();
         process.exit(1);
       });
-    endTime = performance.now();
-    console.log(`updating db took ${endTime - startTime} milliseconds`);
-    ack();
+      endTime = performance.now();
+      console.log(`updating db took ${endTime - startTime} milliseconds`);
+    } else {
+      console.log("no new data");
+    }
+    return await prisma.user.update({
+      where: { walletAddress: global.walletAddress },
+      data: {
+        tradesRefreshed: true,
+      },
+    });
+    // ack();
     console.log("data processing complete");
   } catch (error) {
     console.error(error);
   }
 };
+
+async function findStartDate() {
+  let lastTrade = new Date(0);
+  const user = await prisma.user.findFirst({
+    where: { walletAddress: global.walletAddress },
+  });
+  if (user == null) {
+    return lastTrade;
+  }
+  const trades = await prisma.eRC721Trade.findFirst({
+    where: { walletAddress: global.walletAddress },
+    orderBy: { date: "desc" },
+  });
+  const expenses = await prisma.expense.findFirst({
+    where: { walletAddress: global.walletAddress },
+    orderBy: { date: "desc" },
+  });
+  if (trades != null && expenses == null) lastTrade = trades.date;
+  else if (trades == null && expenses != null) lastTrade = expenses.date;
+  else if (trades != null && expenses != null) {
+    lastTrade = trades.date > expenses.date ? trades.date : expenses.date;
+  }
+  return lastTrade;
+}
 
 async function updateDB({mappedTrades, mapped_expenses}:any) {
   const user = await prisma.user.findFirst({
@@ -130,7 +151,7 @@ async function updateDB({mappedTrades, mapped_expenses}:any) {
   await prisma.expense.createMany({
     data: mapped_expenses,
   })
-  return await prisma.eRC721Trade.createMany({
+  await prisma.eRC721Trade.createMany({
     data: mappedTrades,
   });
 }

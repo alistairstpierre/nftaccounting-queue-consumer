@@ -7,6 +7,7 @@ declare global {
   var alchemy_call_amount: number;
   var walletAddress: string;
   var request_queue: Array;
+  var request_date: Date;
 }
   
 export {};

@@ -11,11 +11,11 @@ export const get_image_urls = async (trades: Trade[]) => {
   const nfts: LooseObject = {};
   trades.forEach((element) => {
     if (element.contract && element.contract.toLowerCase() == "erc721") {
-      if (element.project_address && element.token_id)
-        nfts[`${element.project_address}${element.token_id}`] = { contractAddress: element.project_address, tokenId: element.token_id };
+      if (element.projectAddress && element.tokenId)
+        nfts[`${element.projectAddress}${element.tokenId}`] = { contractAddress: element.projectAddress, tokenId: element.tokenId };
     } else {
-      if (element.project_address && !nfts.hasOwnProperty(element.project_address)) {
-        nfts[element.project_address] = { contractAddress: element.project_address, tokenId: element.token_id };
+      if (element.projectAddress && !nfts.hasOwnProperty(element.projectAddress)) {
+        nfts[element.projectAddress] = { contractAddress: element.projectAddress, tokenId: element.tokenId };
       }
     }
   });
@@ -24,11 +24,11 @@ export const get_image_urls = async (trades: Trade[]) => {
   // find the image url for each nft and add it to the trade
   // check to see if it has an editable url or not, if not just use the collection url for now.
   trades.forEach((element) => {
-    if (element.project_address && element.token_id) {
-      const nft = data.find((x: any) => x.id.tokenId == element.token_id && x.contract.address == element.project_address);
+    if (element.projectAddress && element.tokenId) {
+      const nft = data.find((x: any) => x.id.tokenId == element.tokenId && x.contract.address == element.projectAddress);
       if (nft) {
         if (nft.media[0].gateway.includes("alchemyapi")) {
-          element.img_url = editAlchemyUrl(nft.media[0].gateway, 40);
+          element.imgUrl = editAlchemyUrl(nft.media[0].gateway, 40);
         } 
         // else if (
         //   nft.media[0].gateway.includes("lh3.googleusercontent.com") ||
@@ -39,9 +39,9 @@ export const get_image_urls = async (trades: Trade[]) => {
         //   element.img_url = nft.media[0].gateway;
         // } 
         else {
-          element.img_url = editOpenseaUrl(nft.contractMetadata.openSea.imageUrl, 250);
+          element.imgUrl = editOpenseaUrl(nft.contractMetadata.openSea.imageUrl, 250);
         }
-        if (!element.project) element.project = nft.contractMetadata.name;
+        if (!element.projectName) element.projectName = nft.contractMetadata.name;
       }
     }
   });

@@ -61,6 +61,6 @@ export function parse(data: CovalentItem[]) {
   // });
   global.is_parsing_covalent = false;
   const endTime = performance.now();
-  console.log(`Parse Covalent took ${endTime - startTime} milliseconds`);
+  //console.log(`Parse Covalent took ${endTime - startTime} milliseconds`);
   return transactions;
 }

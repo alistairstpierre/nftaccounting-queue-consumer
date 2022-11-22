@@ -24,22 +24,22 @@ export function trades_parse(transactions: Transaction[]) {
       }
 
       const trade: Trade = {
-        purchase_uuid: `${tx.tx_hash}-${tx.collection_address}-${tx.token_ID}`,
-        sale_uuid: match != undefined ? `${match.tx_hash}-${tx.collection_address}-${tx.token_ID}` : undefined,
-        purchase_type: tx.type,
-        purchase_tx: tx.tx_hash,
-        sale_type: match != undefined ? match.type : undefined,
-        sale_tx: match != undefined ? match.tx_hash : undefined,
-        img_url: undefined,
-        token_id: tx.token_ID,
-        project_address: tx.collection_address,
-        project: tx.collection_name,
+        purchaseUUID: `${tx.tx_hash}-${tx.collection_address}-${tx.token_ID}`,
+        saleUUID: match != undefined ? `${match.tx_hash}-${tx.collection_address}-${tx.token_ID}` : undefined,
+        purchaseType: tx.type,
+        purchaseTransaction: tx.tx_hash,
+        saleType: match != undefined ? match.type : undefined,
+        SaleTransaction: match != undefined ? match.tx_hash : undefined,
+        imgUrl: undefined,
+        tokenId: tx.token_ID,
+        projectAddress: tx.collection_address,
+        projectName: tx.collection_name,
         date: tx.date,
         cost: tx.price,
         sale: match != undefined ? match.price : undefined,
-        fee_gas: getGasFee(tx.type, tx.gas) + (match != undefined ? getGasFee(match?.type, match.gas) : 0),
-        fee_exchange: (match != undefined ? getExchangeFee(match.exchange, match.price) : 0),
-        fee_royalty: undefined,
+        feeGas: getGasFee(tx.type, tx.gas) + (match != undefined ? getGasFee(match?.type, match.gas) : 0),
+        feeExchange: (match != undefined ? getExchangeFee(match.exchange, match.price) : 0),
+        feeRoyalty: undefined,
         profit:
           (match != undefined ? (match.price != undefined ? match.price : 0) : 0) -
           (match != undefined && type_wth_gas_cost.includes(match.type) ? (match.gas != undefined ? match.gas : 0) : 0) -
@@ -50,6 +50,7 @@ export function trades_parse(transactions: Transaction[]) {
         // TODO notes: store.notes.find(n => n.noteId == `${tx.tx_hash}_${tx.token_ID}`)?.entry,
         contract: tx.contract,
       };
+      // console.log("trade", trade.contract);
       if(trade.contract == "ERC721") trades.push(trade);
     }
     else if(tx.type == tx_type.LISTING){
