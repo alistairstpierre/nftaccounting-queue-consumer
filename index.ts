@@ -99,7 +99,7 @@ const handleRequest = async (payload: any, ack: any) => {
     } else {
       console.log("no new data");
     }
-    return await prisma.user.update({
+    await prisma.user.update({
       where: { walletAddress: global.walletAddress },
       data: {
         tradesRefreshed: true,

@@ -50,7 +50,8 @@ const fetch_1 = async (page: number) => {
       }
       // make a new array from the data and return that.
       return parse(data.data.items);
-    });
+    })    
+    .catch((error) => {console.log("covalent", error.response.data.error_message)});
 
   return promise;
 };
