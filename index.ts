@@ -105,7 +105,7 @@ const handleRequest = async (payload: any, ack: any) => {
         tradesRefreshed: true,
       },
     });
-    // ack();
+    ack();
     console.log("data processing complete");
   } catch (error) {
     console.error(error);
