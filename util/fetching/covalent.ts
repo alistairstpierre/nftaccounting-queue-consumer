@@ -15,11 +15,14 @@ export const get_covalent_data = async () => {
   const data = [];
   let start = 0;
   global.is_fetching_covalent = true;
+  const startTime = performance.now();
   do {
     data.push(fetch_5(start).then((res) => res));
     await sleep(1);
     start += 5;
   } while (global.is_fetching_covalent);
+  const endTime = performance.now();
+  console.log(`Fetching Covalent took ${endTime - startTime} milliseconds`);
   return Promise.all(data);
 };
 

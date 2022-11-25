@@ -86,10 +86,9 @@ const fetch_alchemy_meta_data = async (nfts: LooseObject) => {
 const sleep = (seconds: number) => new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 
 export const alchemy_call_amount_check = async () => {
-  console.log("checking alchemy call amount", global.alchemy_call_amount);
-  if (globalThis.alchemy_call_amount >= 50) {
-    console.log("sleeping for 1 second");
-    await sleep(1);
+  if (globalThis.alchemy_call_amount >= 10) {
+    console.log("alchemy calls at 10 sleeping for 2 seconds");
+    await sleep(2);
     console.log("sleep finished");
     globalThis.alchemy_call_amount = 0;
   } else {

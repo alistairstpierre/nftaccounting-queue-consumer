@@ -17,7 +17,7 @@ export function trades_parse(transactions: Transaction[]) {
         (t) => t.collection_address === tx.collection_address && t.token_ID === tx.token_ID && sale_type.find((type) => type === t.type) != undefined
       );
       // order the array by date and find the first date after the tx date
-      const potentialMatch = potentialMatches.sort((a, b) => Number(a.date) - Number(b.date)).filter((t) => t.date > tx.date);
+      const potentialMatch = potentialMatches.sort((a, b) => +(a.date > b.date) || -(a.date < b.date)).filter((t) => t.date > tx.date);
       let match = undefined;
       if (potentialMatch.length > 0 && potentialMatch[0] != undefined) {
         match = potentialMatch[0];

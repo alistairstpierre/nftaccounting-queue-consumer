@@ -39,6 +39,7 @@ export const get_moralis_data = async () => {
   global.is_fetching_moralis = true;
   let next: string | undefined = undefined;
   const promise: any = [];
+  const startTime = performance.now();
   while (global.is_fetching_moralis) {
     let data = await fetch_1_moralis(next)
       .then((res) => {
@@ -57,5 +58,7 @@ export const get_moralis_data = async () => {
       })
       .then((data) => promise.push(data));
   }
+  const endTime = performance.now();
+  console.log(`Fetching Moralis took ${endTime - startTime} milliseconds`);
   return Promise.all(promise);
 };

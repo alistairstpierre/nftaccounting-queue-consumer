@@ -6,6 +6,7 @@ import { trades_parse } from "./util/parsing/trades";
 import { get_image_urls } from "./util/fetching/alchemy";
 import Broker from "./services/rabbitMQ";
 import { PrismaClient } from "@prisma/client";
+import fs from "fs";
 
 const { promisify } = require("util");
 const RMQConsumer = new Broker().init();
@@ -32,7 +33,6 @@ const handleRequest = async (payload: any, ack: any) => {
     let startTime = performance.now();
     const added: any = await Promise.all([get_covalent_data(), get_moralis_data()]);
     let endTime = performance.now();
-    console.log(`Fetching took ${endTime - startTime} milliseconds`);
     const covalent: Transaction[] = [];
     const moralis: MoralisItem[] = [];
     added[0].forEach((item: any) => {
@@ -48,6 +48,7 @@ const handleRequest = async (payload: any, ack: any) => {
       });
     });
     const preParse = moralis_parse(moralis, covalent);
+
     const data = trades_parse(preParse);
     
     const tradesWithUrls = await get_image_urls(data.trades);
@@ -74,6 +75,7 @@ const handleRequest = async (payload: any, ack: any) => {
         walletAddress: global.walletAddress,
       };
     });
+
     const expenses = data.cancels.concat(data.listings, data.failures, data.opensea_expenses);
     const mapped_expenses = expenses.map((expense: Transaction) => {
       return {
@@ -105,7 +107,7 @@ const handleRequest = async (payload: any, ack: any) => {
         tradesRefreshed: true,
       },
     });
-    ack();
+    // ack();
     console.log("data processing complete");
   } catch (error) {
     console.error(error);
