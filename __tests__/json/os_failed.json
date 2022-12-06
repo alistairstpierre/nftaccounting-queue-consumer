@@ -1,0 +1,20 @@
+{
+    "block_signed_at": "2022-05-26T23:56:36Z",
+    "block_height": 14850882,
+    "tx_hash": "0x9058adb54530b1b49e6b13753b42d4346d49353a5da6e35ca2f066190a4d87ce",
+    "tx_offset": 83,
+    "successful": false,
+    "from_address": "0x43a33125418b0de5bda8e4f30277e3cd31dc8a80",
+    "from_address_label": null,
+    "to_address": "0x7f268357a8c2552623316e2562d90e642bb538e5",
+    "to_address_label": null,
+    "value": "0",
+    "value_quote": 0.0,
+    "gas_offered": 81573,
+    "gas_spent": 54216,
+    "gas_price": 27163223095,
+    "fees_paid": "1472681303318520",
+    "gas_quote": 2.6847823283924424,
+    "gas_quote_rate": 1823.0572509765625,
+    "log_events": []
+}

@@ -1,0 +1,70 @@
+{
+  "block_signed_at": "2022-04-04T01:26:23Z",
+  "block_height": 14516622,
+  "tx_hash": "0xbfa8e7793d90b1909a4fcd3bb96b466def972b8497cdf37d3c1385d71e5bc016",
+  "tx_offset": 300,
+  "successful": true,
+  "from_address": "0x43a33125418b0de5bda8e4f30277e3cd31dc8a80",
+  "from_address_label": null,
+  "to_address": "0x59728544b08ab483533076417fbbb2fd0b17ce3a",
+  "to_address_label": "LooksRare: Exchange",
+  "value": "0",
+  "value_quote": 0,
+  "gas_offered": 71976,
+  "gas_spent": 71976,
+  "gas_price": 47888294757,
+  "fees_paid": "3446807903429832",
+  "gas_quote": 12.08752278332882,
+  "gas_quote_rate": 3506.87451171875,
+  "log_events": [
+    {
+      "block_signed_at": "2022-04-04T01:26:23Z",
+      "block_height": 14516622,
+      "tx_offset": 300,
+      "log_offset": 471,
+      "tx_hash": "0xbfa8e7793d90b1909a4fcd3bb96b466def972b8497cdf37d3c1385d71e5bc016",
+      "raw_log_topics": [
+        "0xfa0ae5d80fe3763c880a3839fab0294171a6f730d1f82c4cd5392c6f67b41732",
+        "0x00000000000000000000000043a33125418b0de5bda8e4f30277e3cd31dc8a80"
+      ],
+      "sender_contract_decimals": 0,
+      "sender_name": null,
+      "sender_contract_ticker_symbol": null,
+      "sender_address": "0x59728544b08ab483533076417fbbb2fd0b17ce3a",
+      "sender_address_label": "LooksRare: Exchange",
+      "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x59728544b08ab483533076417fbbb2fd0b17ce3a.png",
+      "raw_log_data": "0x00000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000010f000000000000000000000000000000000000000000000000000000000000010e",
+      "decoded": {
+        "name": "CancelMultipleOrders",
+        "signature": "CancelMultipleOrders(indexed address user, uint256[] orderNonces)",
+        "params": [
+          {
+            "name": "user",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x43a33125418b0de5bda8e4f30277e3cd31dc8a80"
+          },
+          {
+            "name": "orderNonces",
+            "type": "uint256[]",
+            "indexed": false,
+            "decoded": true,
+            "value": [
+              {
+                "value": "271",
+                "bitSize": 256,
+                "typeAsString": "uint256"
+              },
+              {
+                "value": "270",
+                "bitSize": 256,
+                "typeAsString": "uint256"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

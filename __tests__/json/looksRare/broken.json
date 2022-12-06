@@ -1,0 +1,177 @@
+{
+  "block_signed_at": "2022-05-09T21:36:31Z",
+  "block_height": 14744750,
+  "tx_hash": "0xf1c6bca252fed642a22eeba37061562685d231e19fb9326146f7733327d05835",
+  "tx_offset": 44,
+  "successful": true,
+  "from_address": "0x65fc19c3cc01aad1521ab3bf37d2cbbafde573e6",
+  "from_address_label": null,
+  "to_address": "0x59728544b08ab483533076417fbbb2fd0b17ce3a",
+  "to_address_label": null,
+  "value": "0",
+  "value_quote": 0.0,
+  "gas_offered": 289198,
+  "gas_spent": 212676,
+  "gas_price": 65914372422,
+  "fees_paid": "14018405069221272",
+  "gas_quote": 35.46545936984726,
+  "gas_quote_rate": 2529.921142578125,
+  "log_events": [
+    {
+      "block_signed_at": "2022-05-09T21:36:31Z",
+      "block_height": 14744750,
+      "tx_offset": 44,
+      "log_offset": 56,
+      "tx_hash": "0xf1c6bca252fed642a22eeba37061562685d231e19fb9326146f7733327d05835",
+      "raw_log_topics": [
+        "0x68cd251d4d267c6e2034ff0088b990352b97b2002c0476587d0c4da889c11330",
+        "0x00000000000000000000000065fc19c3cc01aad1521ab3bf37d2cbbafde573e6",
+        "0x00000000000000000000000073cd457e12f5fa160261fef96c63ca4ca0478b2f",
+        "0x00000000000000000000000086f909f70813cdb1bc733f4d97dc6b03b8e7e8f3"
+      ],
+      "sender_contract_decimals": 0,
+      "sender_name": null,
+      "sender_contract_ticker_symbol": null,
+      "sender_address": "0x59728544b08ab483533076417fbbb2fd0b17ce3a",
+      "sender_address_label": null,
+      "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x59728544b08ab483533076417fbbb2fd0b17ce3a.png",
+      "raw_log_data": "0xc7bb460be2f60cf92bf2bf6f7eb03028ee41e710136b9844f354736cda609f500000000000000000000000000000000000000000000000000000000000000044000000000000000000000000c02aaa39b223fe8d0a0e5c4f27ead9083c756cc2000000000000000000000000430bb202bef7a2d067cd3851b681edfa78d04ee200000000000000000000000000000000000000000000000000000000000001bb000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000001d4f54cf65a0000",
+      "decoded": {
+        "name": "TakerAsk",
+        "signature": "TakerAsk(bytes32 orderHash, uint256 orderNonce, indexed address taker, indexed address maker, indexed address strategy, address currency, address collection, uint256 tokenId, uint256 amount, uint256 price)",
+        "params": [
+          {
+            "name": "orderHash",
+            "type": "bytes32",
+            "indexed": false,
+            "decoded": true,
+            "value": "x7tGC+L2DPkr8r9vfrAwKO5B5xATa5hE81RzbNpgn1A="
+          },
+          { "name": "orderNonce", "type": "uint256", "indexed": false, "decoded": true, "value": "68" },
+          { "name": "taker", "type": "address", "indexed": true, "decoded": true, "value": "0x65fc19c3cc01aad1521ab3bf37d2cbbafde573e6" },
+          { "name": "maker", "type": "address", "indexed": true, "decoded": true, "value": "0x73cd457e12f5fa160261fef96c63ca4ca0478b2f" },
+          { "name": "strategy", "type": "address", "indexed": true, "decoded": true, "value": "0x86f909f70813cdb1bc733f4d97dc6b03b8e7e8f3" },
+          { "name": "currency", "type": "address", "indexed": false, "decoded": true, "value": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2" },
+          { "name": "collection", "type": "address", "indexed": false, "decoded": true, "value": "0x430bb202bef7a2d067cd3851b681edfa78d04ee2" },
+          { "name": "tokenId", "type": "uint256", "indexed": false, "decoded": true, "value": "443" },
+          { "name": "amount", "type": "uint256", "indexed": false, "decoded": true, "value": "1" },
+          { "name": "price", "type": "uint256", "indexed": false, "decoded": true, "value": "132000000000000000" }
+        ]
+      }
+    },
+    {
+      "block_signed_at": "2022-05-09T21:36:31Z",
+      "block_height": 14744750,
+      "tx_offset": 44,
+      "log_offset": 55,
+      "tx_hash": "0xf1c6bca252fed642a22eeba37061562685d231e19fb9326146f7733327d05835",
+      "raw_log_topics": [
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+        "0x00000000000000000000000073cd457e12f5fa160261fef96c63ca4ca0478b2f",
+        "0x00000000000000000000000065fc19c3cc01aad1521ab3bf37d2cbbafde573e6"
+      ],
+      "sender_contract_decimals": 18,
+      "sender_name": "Wrapped Ether",
+      "sender_contract_ticker_symbol": "WETH",
+      "sender_address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "sender_address_label": null,
+      "sender_logo_url": "https://logos.covalenthq.com/tokens/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
+      "raw_log_data": "0x00000000000000000000000000000000000000000000000001cb943c10250000",
+      "decoded": {
+        "name": "Transfer",
+        "signature": "Transfer(indexed address from, indexed address to, uint256 value)",
+        "params": [
+          { "name": "from", "type": "address", "indexed": true, "decoded": true, "value": "0x73cd457e12f5fa160261fef96c63ca4ca0478b2f" },
+          { "name": "to", "type": "address", "indexed": true, "decoded": true, "value": "0x65fc19c3cc01aad1521ab3bf37d2cbbafde573e6" },
+          { "name": "value", "type": "uint256", "indexed": false, "decoded": true, "value": "129360000000000000" }
+        ]
+      }
+    },
+    {
+      "block_signed_at": "2022-05-09T21:36:31Z",
+      "block_height": 14744750,
+      "tx_offset": 44,
+      "log_offset": 54,
+      "tx_hash": "0xf1c6bca252fed642a22eeba37061562685d231e19fb9326146f7733327d05835",
+      "raw_log_topics": [
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+        "0x00000000000000000000000073cd457e12f5fa160261fef96c63ca4ca0478b2f",
+        "0x0000000000000000000000005924a28caaf1cc016617874a2f0c3710d881f3c1"
+      ],
+      "sender_contract_decimals": 18,
+      "sender_name": "Wrapped Ether",
+      "sender_contract_ticker_symbol": "WETH",
+      "sender_address": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+      "sender_address_label": null,
+      "sender_logo_url": "https://logos.covalenthq.com/tokens/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2.png",
+      "raw_log_data": "0x00000000000000000000000000000000000000000000000000096110e6350000",
+      "decoded": {
+        "name": "Transfer",
+        "signature": "Transfer(indexed address from, indexed address to, uint256 value)",
+        "params": [
+          { "name": "from", "type": "address", "indexed": true, "decoded": true, "value": "0x73cd457e12f5fa160261fef96c63ca4ca0478b2f" },
+          { "name": "to", "type": "address", "indexed": true, "decoded": true, "value": "0x5924a28caaf1cc016617874a2f0c3710d881f3c1" },
+          { "name": "value", "type": "uint256", "indexed": false, "decoded": true, "value": "2640000000000000" }
+        ]
+      }
+    },
+    {
+      "block_signed_at": "2022-05-09T21:36:31Z",
+      "block_height": 14744750,
+      "tx_offset": 44,
+      "log_offset": 53,
+      "tx_hash": "0xf1c6bca252fed642a22eeba37061562685d231e19fb9326146f7733327d05835",
+      "raw_log_topics": [
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+        "0x00000000000000000000000065fc19c3cc01aad1521ab3bf37d2cbbafde573e6",
+        "0x00000000000000000000000073cd457e12f5fa160261fef96c63ca4ca0478b2f",
+        "0x00000000000000000000000000000000000000000000000000000000000001bb"
+      ],
+      "sender_contract_decimals": 0,
+      "sender_name": "ForeverBots",
+      "sender_contract_ticker_symbol": "BOTS",
+      "sender_address": "0x430bb202bef7a2d067cd3851b681edfa78d04ee2",
+      "sender_address_label": null,
+      "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x430bb202bef7a2d067cd3851b681edfa78d04ee2.png",
+      "raw_log_data": null,
+      "decoded": {
+        "name": "Transfer",
+        "signature": "Transfer(indexed address from, indexed address to, indexed uint256 tokenId)",
+        "params": [
+          { "name": "from", "type": "address", "indexed": true, "decoded": true, "value": "0x65fc19c3cc01aad1521ab3bf37d2cbbafde573e6" },
+          { "name": "to", "type": "address", "indexed": true, "decoded": true, "value": "0x73cd457e12f5fa160261fef96c63ca4ca0478b2f" },
+          { "name": "tokenId", "type": "uint256", "indexed": true, "decoded": true, "value": "443" }
+        ]
+      }
+    },
+    {
+      "block_signed_at": "2022-05-09T21:36:31Z",
+      "block_height": 14744750,
+      "tx_offset": 44,
+      "log_offset": 52,
+      "tx_hash": "0xf1c6bca252fed642a22eeba37061562685d231e19fb9326146f7733327d05835",
+      "raw_log_topics": [
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+        "0x00000000000000000000000065fc19c3cc01aad1521ab3bf37d2cbbafde573e6",
+        "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "0x00000000000000000000000000000000000000000000000000000000000001bb"
+      ],
+      "sender_contract_decimals": 0,
+      "sender_name": "ForeverBots",
+      "sender_contract_ticker_symbol": "BOTS",
+      "sender_address": "0x430bb202bef7a2d067cd3851b681edfa78d04ee2",
+      "sender_address_label": null,
+      "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x430bb202bef7a2d067cd3851b681edfa78d04ee2.png",
+      "raw_log_data": null,
+      "decoded": {
+        "name": "Approval",
+        "signature": "Approval(indexed address from, indexed address to, indexed uint256 tokenId)",
+        "params": [
+          { "name": "from", "type": "address", "indexed": true, "decoded": true, "value": "0x65fc19c3cc01aad1521ab3bf37d2cbbafde573e6" },
+          { "name": "to", "type": "address", "indexed": true, "decoded": true, "value": "0x0000000000000000000000000000000000000000" },
+          { "name": "tokenId", "type": "uint256", "indexed": true, "decoded": true, "value": "443" }
+        ]
+      }
+    }
+  ]
+}

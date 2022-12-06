@@ -47,7 +47,6 @@ export function trades_parse(transactions: Transaction[]) {
           (match != undefined ? (match.royalty_fee != undefined ? match.royalty_fee : 0) : 0) -
           (tx.price != undefined ? tx.price : 0) -
           (type_wth_gas_cost.includes(tx.type) ? (tx.gas != undefined ? tx.gas : 0) : 0),
-        // TODO notes: store.notes.find(n => n.noteId == `${tx.tx_hash}_${tx.token_ID}`)?.entry,
         contract: tx.contract,
       };
       // console.log("trade", trade.contract);

@@ -51,6 +51,8 @@ export const log_types = {
   TOKENID: "tokenId",
   MULTISENDED: "Multisended",
   APPROVAL: "Approval",
+  NONCE_INCREMENTED: "NonceIncremented",
+  CANCEL_MULTIPLE_ORDERS: "CancelMultipleOrders",
 };
 
 const gweiInEth = 0.000000000966;

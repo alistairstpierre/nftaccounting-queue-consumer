@@ -1,0 +1,471 @@
+{
+    "block_signed_at": "2022-06-08T08:19:35Z",
+    "block_height": 14925679,
+    "tx_hash": "0x979b15813a3fbe416f340127e5052d6d5ea2351aff4793129e0277921a2d700a",
+    "tx_offset": 266,
+    "successful": true,
+    "from_address": "0x6a1396d688391cbe750d39ef7d8d4d6dbb4d65e6",
+    "from_address_label": null,
+    "to_address": "0x83c8f28c26bf6aaca652df1dbbe0e1b56f8baba2",
+    "to_address_label": "Gem: GemSwap 2",
+    "value": "36800000000000000",
+    "value_quote": 66.3511142578125,
+    "gas_offered": 879156,
+    "gas_spent": 533833,
+    "gas_price": 48403523494,
+    "fees_paid": "25839398157372502",
+    "gas_quote": 46.588936399264476,
+    "gas_quote_rate": 1803.0194091796875,
+    "log_events": [
+    {
+        "block_signed_at": "2022-06-08T08:19:35Z",
+        "block_height": 14925679,
+        "tx_offset": 266,
+        "log_offset": 416,
+        "tx_hash": "0x979b15813a3fbe416f340127e5052d6d5ea2351aff4793129e0277921a2d700a",
+        "raw_log_topics": [
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+        "0x00000000000000000000000083c8f28c26bf6aaca652df1dbbe0e1b56f8baba2",
+        "0x0000000000000000000000006a1396d688391cbe750d39ef7d8d4d6dbb4d65e6",
+        "0x0000000000000000000000000000000000000000000000000000000000000039"
+        ],
+        "sender_contract_decimals": 0,
+        "sender_name": "Goki",
+        "sender_contract_ticker_symbol": "GOKI",
+        "sender_address": "0x17a088824f5d19876fa1929bb42315ef0a148c08",
+        "sender_address_label": null,
+        "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x17a088824f5d19876fa1929bb42315ef0a148c08.png",
+        "raw_log_data": null,
+        "decoded": {
+        "name": "Transfer",
+        "signature": "Transfer(indexed address from, indexed address to, uint256 value)",
+        "params": [
+            {
+            "name": "from",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x83c8f28c26bf6aaca652df1dbbe0e1b56f8baba2"
+            },
+            {
+            "name": "to",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x6a1396d688391cbe750d39ef7d8d4d6dbb4d65e6"
+            },
+            {
+            "name": "value",
+            "type": "uint256",
+            "indexed": false,
+            "decoded": false,
+            "value": null
+            }
+        ]
+        }
+    },
+    {
+        "block_signed_at": "2022-06-08T08:19:35Z",
+        "block_height": 14925679,
+        "tx_offset": 266,
+        "log_offset": 415,
+        "tx_hash": "0x979b15813a3fbe416f340127e5052d6d5ea2351aff4793129e0277921a2d700a",
+        "raw_log_topics": [
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+        "0x00000000000000000000000083c8f28c26bf6aaca652df1dbbe0e1b56f8baba2",
+        "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "0x0000000000000000000000000000000000000000000000000000000000000039"
+        ],
+        "sender_contract_decimals": 0,
+        "sender_name": "Goki",
+        "sender_contract_ticker_symbol": "GOKI",
+        "sender_address": "0x17a088824f5d19876fa1929bb42315ef0a148c08",
+        "sender_address_label": null,
+        "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x17a088824f5d19876fa1929bb42315ef0a148c08.png",
+        "raw_log_data": null,
+        "decoded": {
+        "name": "Approval",
+        "signature": "Approval(indexed address owner, indexed address spender, uint256 value)",
+        "params": [
+            {
+            "name": "owner",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x83c8f28c26bf6aaca652df1dbbe0e1b56f8baba2"
+            },
+            {
+            "name": "spender",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x0000000000000000000000000000000000000000"
+            },
+            {
+            "name": "value",
+            "type": "uint256",
+            "indexed": false,
+            "decoded": false,
+            "value": null
+            }
+        ]
+        }
+    },
+    {
+        "block_signed_at": "2022-06-08T08:19:35Z",
+        "block_height": 14925679,
+        "tx_offset": 266,
+        "log_offset": 414,
+        "tx_hash": "0x979b15813a3fbe416f340127e5052d6d5ea2351aff4793129e0277921a2d700a",
+        "raw_log_topics": [
+        "0x3cbb63f144840e5b1b0a38a7c19211d2e89de4d7c5faf8b2d3c1776c302d1d33",
+        "0xd3eb7d875ec1581a3ee6b6de6241b098d71f74bc9ee2cc1d2f4054787f6e182c"
+        ],
+        "sender_contract_decimals": 0,
+        "sender_name": null,
+        "sender_contract_ticker_symbol": null,
+        "sender_address": "0x74312363e45dcaba76c59ec49a7aa8a65a67eed3",
+        "sender_address_label": null,
+        "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x74312363e45dcaba76c59ec49a7aa8a65a67eed3.png",
+        "raw_log_data": "0x0000000000000000000000006308caa8ac2490c0135883b69f844880c348469f00000000000000000000000083c8f28c26bf6aaca652df1dbbe0e1b56f8baba2000000000000000000000000000000003418964210ff9e5af64742747ebf452100000000000000000000000000000000000000000000000000028833d0667b1a000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000062c7e6f0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000180000000000000000000000000000000000000000000000000000000000000026000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000021c0331d5dc000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000100000000000000000000000017a088824f5d19876fa1929bb42315ef0a148c0800000000000000000000000000000000000000000000000000000000000000390000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000021c0331d5dc000d3eb7d875ec1581a3ee6b6de6241b098d71f74bc9ee2cc1d2f4054787f6e182c000000000000000000000000f849de01b080adc3a814fabe1e2087475cf2e35400000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000180000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000001388000000000000000000000000d823c605807cc5e6bd6fc0d7e4eea50d3e2d66cd",
+        "decoded": null
+    },
+    {
+        "block_signed_at": "2022-06-08T08:19:35Z",
+        "block_height": 14925679,
+        "tx_offset": 266,
+        "log_offset": 413,
+        "tx_hash": "0x979b15813a3fbe416f340127e5052d6d5ea2351aff4793129e0277921a2d700a",
+        "raw_log_topics": [
+        "0xe2c49856b032c255ae7e325d18109bc4e22a2804e2e49a017ec0f59f19cd447b"
+        ],
+        "sender_contract_decimals": 0,
+        "sender_name": null,
+        "sender_contract_ticker_symbol": null,
+        "sender_address": "0x74312363e45dcaba76c59ec49a7aa8a65a67eed3",
+        "sender_address_label": null,
+        "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x74312363e45dcaba76c59ec49a7aa8a65a67eed3.png",
+        "raw_log_data": "0xd3eb7d875ec1581a3ee6b6de6241b098d71f74bc9ee2cc1d2f4054787f6e182c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000006308caa8ac2490c0135883b69f844880c348469f000000000000000000000000000000000000000000000000002194ffa8bd4800",
+        "decoded": null
+    },
+    {
+        "block_signed_at": "2022-06-08T08:19:35Z",
+        "block_height": 14925679,
+        "tx_offset": 266,
+        "log_offset": 412,
+        "tx_hash": "0x979b15813a3fbe416f340127e5052d6d5ea2351aff4793129e0277921a2d700a",
+        "raw_log_topics": [
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+        "0x0000000000000000000000006308caa8ac2490c0135883b69f844880c348469f",
+        "0x00000000000000000000000083c8f28c26bf6aaca652df1dbbe0e1b56f8baba2",
+        "0x0000000000000000000000000000000000000000000000000000000000000039"
+        ],
+        "sender_contract_decimals": 0,
+        "sender_name": "Goki",
+        "sender_contract_ticker_symbol": "GOKI",
+        "sender_address": "0x17a088824f5d19876fa1929bb42315ef0a148c08",
+        "sender_address_label": null,
+        "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x17a088824f5d19876fa1929bb42315ef0a148c08.png",
+        "raw_log_data": null,
+        "decoded": {
+        "name": "Transfer",
+        "signature": "Transfer(indexed address from, indexed address to, uint256 value)",
+        "params": [
+            {
+            "name": "from",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x6308caa8ac2490c0135883b69f844880c348469f"
+            },
+            {
+            "name": "to",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x83c8f28c26bf6aaca652df1dbbe0e1b56f8baba2"
+            },
+            {
+            "name": "value",
+            "type": "uint256",
+            "indexed": false,
+            "decoded": false,
+            "value": null
+            }
+        ]
+        }
+    },
+    {
+        "block_signed_at": "2022-06-08T08:19:35Z",
+        "block_height": 14925679,
+        "tx_offset": 266,
+        "log_offset": 411,
+        "tx_hash": "0x979b15813a3fbe416f340127e5052d6d5ea2351aff4793129e0277921a2d700a",
+        "raw_log_topics": [
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+        "0x0000000000000000000000006308caa8ac2490c0135883b69f844880c348469f",
+        "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "0x0000000000000000000000000000000000000000000000000000000000000039"
+        ],
+        "sender_contract_decimals": 0,
+        "sender_name": "Goki",
+        "sender_contract_ticker_symbol": "GOKI",
+        "sender_address": "0x17a088824f5d19876fa1929bb42315ef0a148c08",
+        "sender_address_label": null,
+        "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x17a088824f5d19876fa1929bb42315ef0a148c08.png",
+        "raw_log_data": null,
+        "decoded": {
+        "name": "Approval",
+        "signature": "Approval(indexed address owner, indexed address spender, uint256 value)",
+        "params": [
+            {
+            "name": "owner",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x6308caa8ac2490c0135883b69f844880c348469f"
+            },
+            {
+            "name": "spender",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x0000000000000000000000000000000000000000"
+            },
+            {
+            "name": "value",
+            "type": "uint256",
+            "indexed": false,
+            "decoded": false,
+            "value": null
+            }
+        ]
+        }
+    },
+    {
+        "block_signed_at": "2022-06-08T08:19:35Z",
+        "block_height": 14925679,
+        "tx_offset": 266,
+        "log_offset": 410,
+        "tx_hash": "0x979b15813a3fbe416f340127e5052d6d5ea2351aff4793129e0277921a2d700a",
+        "raw_log_topics": [
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+        "0x00000000000000000000000083c8f28c26bf6aaca652df1dbbe0e1b56f8baba2",
+        "0x0000000000000000000000006a1396d688391cbe750d39ef7d8d4d6dbb4d65e6",
+        "0x0000000000000000000000000000000000000000000000000000000000000f64"
+        ],
+        "sender_contract_decimals": 0,
+        "sender_name": "Goki",
+        "sender_contract_ticker_symbol": "GOKI",
+        "sender_address": "0x17a088824f5d19876fa1929bb42315ef0a148c08",
+        "sender_address_label": null,
+        "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x17a088824f5d19876fa1929bb42315ef0a148c08.png",
+        "raw_log_data": null,
+        "decoded": {
+        "name": "Transfer",
+        "signature": "Transfer(indexed address from, indexed address to, uint256 value)",
+        "params": [
+            {
+            "name": "from",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x83c8f28c26bf6aaca652df1dbbe0e1b56f8baba2"
+            },
+            {
+            "name": "to",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x6a1396d688391cbe750d39ef7d8d4d6dbb4d65e6"
+            },
+            {
+            "name": "value",
+            "type": "uint256",
+            "indexed": false,
+            "decoded": false,
+            "value": null
+            }
+        ]
+        }
+    },
+    {
+        "block_signed_at": "2022-06-08T08:19:35Z",
+        "block_height": 14925679,
+        "tx_offset": 266,
+        "log_offset": 409,
+        "tx_hash": "0x979b15813a3fbe416f340127e5052d6d5ea2351aff4793129e0277921a2d700a",
+        "raw_log_topics": [
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+        "0x00000000000000000000000083c8f28c26bf6aaca652df1dbbe0e1b56f8baba2",
+        "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "0x0000000000000000000000000000000000000000000000000000000000000f64"
+        ],
+        "sender_contract_decimals": 0,
+        "sender_name": "Goki",
+        "sender_contract_ticker_symbol": "GOKI",
+        "sender_address": "0x17a088824f5d19876fa1929bb42315ef0a148c08",
+        "sender_address_label": null,
+        "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x17a088824f5d19876fa1929bb42315ef0a148c08.png",
+        "raw_log_data": null,
+        "decoded": {
+        "name": "Approval",
+        "signature": "Approval(indexed address owner, indexed address spender, uint256 value)",
+        "params": [
+            {
+            "name": "owner",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x83c8f28c26bf6aaca652df1dbbe0e1b56f8baba2"
+            },
+            {
+            "name": "spender",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x0000000000000000000000000000000000000000"
+            },
+            {
+            "name": "value",
+            "type": "uint256",
+            "indexed": false,
+            "decoded": false,
+            "value": null
+            }
+        ]
+        }
+    },
+    {
+        "block_signed_at": "2022-06-08T08:19:35Z",
+        "block_height": 14925679,
+        "tx_offset": 266,
+        "log_offset": 408,
+        "tx_hash": "0x979b15813a3fbe416f340127e5052d6d5ea2351aff4793129e0277921a2d700a",
+        "raw_log_topics": [
+        "0x3cbb63f144840e5b1b0a38a7c19211d2e89de4d7c5faf8b2d3c1776c302d1d33",
+        "0xf31c9d75c48abf82054e9e37862cd745511d33f524acd0fe1644e4ba9aea2e48"
+        ],
+        "sender_contract_decimals": 0,
+        "sender_name": null,
+        "sender_contract_ticker_symbol": null,
+        "sender_address": "0x74312363e45dcaba76c59ec49a7aa8a65a67eed3",
+        "sender_address_label": null,
+        "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x74312363e45dcaba76c59ec49a7aa8a65a67eed3.png",
+        "raw_log_data": "0x000000000000000000000000b46d74861f82419af8b8985aa28994c9e02f039d00000000000000000000000083c8f28c26bf6aaca652df1dbbe0e1b56f8baba200000000000000000000000000000000789becf3b9b03261d3a96086a9e886f90000000000000000000000000000000000000000000000000000260bc1e35b90000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000062a0661000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000160000000000000000000000000000000000000000000000000000000000000018000000000000000000000000000000000000000000000000000000000000002600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001ff973cafa8000000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000100000000000000000000000017a088824f5d19876fa1929bb42315ef0a148c080000000000000000000000000000000000000000000000000000000000000f64000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001ff973cafa8000f31c9d75c48abf82054e9e37862cd745511d33f524acd0fe1644e4ba9aea2e48000000000000000000000000f849de01b080adc3a814fabe1e2087475cf2e35400000000000000000000000000000000000000000000000000000000000001600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000180000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000001388000000000000000000000000d823c605807cc5e6bd6fc0d7e4eea50d3e2d66cd",
+        "decoded": null
+    },
+    {
+        "block_signed_at": "2022-06-08T08:19:35Z",
+        "block_height": 14925679,
+        "tx_offset": 266,
+        "log_offset": 407,
+        "tx_hash": "0x979b15813a3fbe416f340127e5052d6d5ea2351aff4793129e0277921a2d700a",
+        "raw_log_topics": [
+        "0xe2c49856b032c255ae7e325d18109bc4e22a2804e2e49a017ec0f59f19cd447b"
+        ],
+        "sender_contract_decimals": 0,
+        "sender_name": null,
+        "sender_contract_ticker_symbol": null,
+        "sender_address": "0x74312363e45dcaba76c59ec49a7aa8a65a67eed3",
+        "sender_address_label": null,
+        "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x74312363e45dcaba76c59ec49a7aa8a65a67eed3.png",
+        "raw_log_data": "0xf31c9d75c48abf82054e9e37862cd745511d33f524acd0fe1644e4ba9aea2e480000000000000000000000000000000000000000000000000000000000000000000000000000000000000000b46d74861f82419af8b8985aa28994c9e02f039d000000000000000000000000000000000000000000000000001fd08669f6b000",
+        "decoded": null
+    },
+    {
+        "block_signed_at": "2022-06-08T08:19:35Z",
+        "block_height": 14925679,
+        "tx_offset": 266,
+        "log_offset": 406,
+        "tx_hash": "0x979b15813a3fbe416f340127e5052d6d5ea2351aff4793129e0277921a2d700a",
+        "raw_log_topics": [
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+        "0x000000000000000000000000b46d74861f82419af8b8985aa28994c9e02f039d",
+        "0x00000000000000000000000083c8f28c26bf6aaca652df1dbbe0e1b56f8baba2",
+        "0x0000000000000000000000000000000000000000000000000000000000000f64"
+        ],
+        "sender_contract_decimals": 0,
+        "sender_name": "Goki",
+        "sender_contract_ticker_symbol": "GOKI",
+        "sender_address": "0x17a088824f5d19876fa1929bb42315ef0a148c08",
+        "sender_address_label": null,
+        "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x17a088824f5d19876fa1929bb42315ef0a148c08.png",
+        "raw_log_data": null,
+        "decoded": {
+        "name": "Transfer",
+        "signature": "Transfer(indexed address from, indexed address to, uint256 value)",
+        "params": [
+            {
+            "name": "from",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0xb46d74861f82419af8b8985aa28994c9e02f039d"
+            },
+            {
+            "name": "to",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x83c8f28c26bf6aaca652df1dbbe0e1b56f8baba2"
+            },
+            {
+            "name": "value",
+            "type": "uint256",
+            "indexed": false,
+            "decoded": false,
+            "value": null
+            }
+        ]
+        }
+    },
+    {
+        "block_signed_at": "2022-06-08T08:19:35Z",
+        "block_height": 14925679,
+        "tx_offset": 266,
+        "log_offset": 405,
+        "tx_hash": "0x979b15813a3fbe416f340127e5052d6d5ea2351aff4793129e0277921a2d700a",
+        "raw_log_topics": [
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+        "0x000000000000000000000000b46d74861f82419af8b8985aa28994c9e02f039d",
+        "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "0x0000000000000000000000000000000000000000000000000000000000000f64"
+        ],
+        "sender_contract_decimals": 0,
+        "sender_name": "Goki",
+        "sender_contract_ticker_symbol": "GOKI",
+        "sender_address": "0x17a088824f5d19876fa1929bb42315ef0a148c08",
+        "sender_address_label": null,
+        "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x17a088824f5d19876fa1929bb42315ef0a148c08.png",
+        "raw_log_data": null,
+        "decoded": {
+        "name": "Approval",
+        "signature": "Approval(indexed address owner, indexed address spender, uint256 value)",
+        "params": [
+            {
+            "name": "owner",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0xb46d74861f82419af8b8985aa28994c9e02f039d"
+            },
+            {
+            "name": "spender",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x0000000000000000000000000000000000000000"
+            },
+            {
+            "name": "value",
+            "type": "uint256",
+            "indexed": false,
+            "decoded": false,
+            "value": null
+            }
+        ]
+        }
+    }
+    ]
+}

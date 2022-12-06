@@ -29,7 +29,7 @@ export function create_opensea_transaction(item: CovalentItem): Transaction[] {
         transactions.push(tx);
       });
     else if (item.log_events.length == 5 || item.log_events.length == 4) transactions.push(create_opensea_bid_transaction(item));
-    else if (item.log_events.length == 1 && item.log_events[0]?.decoded?.name == log_types.ORDER_CANCELLED)
+    else if (item.log_events.length == 1 && item.log_events[0]?.decoded?.name == (log_types.ORDER_CANCELLED || log_types.NONCE_INCREMENTED))
       transactions.push(create_opensea_cancelled_listing(item));
     else if (item.log_events.length == 1 && item.log_events[0]?.decoded?.name == log_types.UPGRADED)
       transactions.push(create_opensea_register_expense(item));

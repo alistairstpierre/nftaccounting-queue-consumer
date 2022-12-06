@@ -51,10 +51,17 @@ model Note {
   contents      String      @db.VarChar(2000)
 }
 
+enum DataStatus {
+  NONE
+  SUCCESS
+  PENDING
+  FAILURE
+}
+
 model User {
   walletAddress     String        @id @unique @db.VarChar(100)
   tradesUpdatedAt   DateTime?
-  tradesRefreshed   Boolean       @default(false)
+  dataStatus        DataStatus    @default(NONE)
   hiddenCollections String[]
   trades            ERC721Trade[]
   notes             Note[]

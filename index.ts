@@ -1,38 +1,51 @@
-import { MoralisItem, Trade, Transaction } from "./interfaces";
+import { MoralisItem, Trade, Transaction, Data } from './interfaces';
 import { get_covalent_data } from "./util/fetching/covalent";
 import { get_moralis_data } from "./util/fetching/moralis";
 import { moralis_parse } from "./util/parsing/moralis/moralisparser";
 import { trades_parse } from "./util/parsing/trades";
 import { get_image_urls } from "./util/fetching/alchemy";
 import Broker from "./services/rabbitMQ";
-import { PrismaClient } from "@prisma/client";
-import fs from "fs";
+import { PrismaClient, DataStatus } from "@prisma/client";
 
 const { promisify } = require("util");
 const RMQConsumer = new Broker().init();
 const pipeline = promisify(require("stream").pipeline);
 const prisma = new PrismaClient();
 
+const resetGlobals = () => {
+  global.is_fetching_covalent = false;
+  global.is_fetching_moralis = false;
+  global.is_fetching_opensea = false;
+  global.is_parsing_covalent = false;
+  global.request_aborted = false;
+  global.alchemy_call_amount = 0;
+}
+
 /**
  * Process 1:1 message and stores in db, also processes group messages 1 by 1
  * @param {String} payload - message in json string format
  * @param {Function} ack - callback function
  */
+
 const handleRequest = async (payload: any, ack: any) => {
   try {
     console.log("start data processing");
-    global.is_fetching_covalent = false;
-    global.is_fetching_moralis = false;
-    global.is_fetching_opensea = false;
-    global.is_parsing_covalent = false;
-    global.alchemy_call_amount = 0;
+    resetGlobals();
     const payloadData = JSON.parse(payload.content.toString());
     global.walletAddress = payloadData.wallet.toLowerCase();
+    pendingStatus();
     global.request_date = await findStartDate();
-    console.log(global.request_date);
+    console.log(global.walletAddress, global.request_date);
     let startTime = performance.now();
     const added: any = await Promise.all([get_covalent_data(), get_moralis_data()]);
     let endTime = performance.now();
+    console.log("fetching and parsing covalent and morlais data took " + (endTime - startTime) + " milliseconds.");
+    if(global.request_aborted){
+      console.log("request aborted");
+      failureStatus();
+      ack();
+      return;
+    }
     const covalent: Transaction[] = [];
     const moralis: MoralisItem[] = [];
     added[0].forEach((item: any) => {
@@ -104,15 +117,33 @@ const handleRequest = async (payload: any, ack: any) => {
     await prisma.user.update({
       where: { walletAddress: global.walletAddress },
       data: {
-        tradesRefreshed: true,
+        dataStatus: DataStatus.SUCCESS,
       },
     });
-    // ack();
+    ack();
     console.log("data processing complete");
   } catch (error) {
     console.error(error);
   }
 };
+
+async function pendingStatus() {
+  await prisma.user.update({
+    where: { walletAddress: global.walletAddress },
+    data: {
+      dataStatus: DataStatus.PENDING,
+    },
+  });
+}
+
+async function failureStatus() {
+  await prisma.user.update({
+    where: { walletAddress: global.walletAddress },
+    data: {
+      dataStatus: DataStatus.FAILURE,
+    },
+  });
+}
 
 async function findStartDate() {
   let lastTrade = new Date(0);
@@ -173,7 +204,7 @@ async function processUploads() {
 }
 
 processUploads();
-console.log("consumer started");
+console.log("consumer started"); 
 
 // close channek, connection on exit
 process.on("exit", (code) => async () => {

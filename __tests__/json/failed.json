@@ -1,0 +1,20 @@
+{
+  "block_signed_at": "2022-03-29T21:49:32Z",
+  "block_height": 14483624,
+  "tx_hash": "0x6401669ecb8185fc50496dd41e4187cb0b33f4c052b4bede2f7e5ebbb6fa4efa",
+  "tx_offset": 115,
+  "successful": false,
+  "from_address": "0x43a33125418b0de5bda8e4f30277e3cd31dc8a80",
+  "from_address_label": null,
+  "to_address": "0x7f268357a8c2552623316e2562d90e642bb538e5",
+  "to_address_label": "Wyvern Exchange Contract (-)",
+  "value": "179000000000000000",
+  "value_quote": 602.8533833007813,
+  "gas_offered": 232162,
+  "gas_spent": 72316,
+  "gas_price": 70934500547,
+  "fees_paid": "5129699341556852",
+  "gas_quote": 17.276293873594067,
+  "gas_quote_rate": 3367.89599609375,
+  "log_events": []
+}

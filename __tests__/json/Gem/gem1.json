@@ -1,0 +1,507 @@
+{
+  "block_signed_at": "2022-02-18T22:42:06Z",
+  "block_height": 14232808,
+  "tx_hash": "0x02c53e89c51639004fe7734ae57421b91020fac4f2b238b41036af907169fd22",
+  "tx_offset": 217,
+  "successful": true,
+  "from_address": "0x6d5d031a9331b44995ce0d8dd7260a0d2af1fcd2",
+  "from_address_label": null,
+  "to_address": "0xf24629fbb477e10f2cf331c2b7452d8596b5c7a5",
+  "to_address_label": "Gem: GemSwap",
+  "value": "1128000000000000000",
+  "value_quote": 3185.0949902343746,
+  "gas_offered": 570202,
+  "gas_spent": 555266,
+  "gas_price": 84866884008,
+  "fees_paid": "47123695215586128",
+  "gas_quote": 133.06156520611256,
+  "gas_quote_rate": 2823.665771484375,
+  "log_events": [
+    {
+      "block_signed_at": "2022-02-18T22:42:06Z",
+      "block_height": 14232808,
+      "tx_offset": 217,
+      "log_offset": 384,
+      "tx_hash": "0x02c53e89c51639004fe7734ae57421b91020fac4f2b238b41036af907169fd22",
+      "raw_log_topics": [
+        "0xc4109843e0b7d514e4c093114b863f8e7d8d9a458c372cd51bfe526b588006c9",
+        "0x0000000000000000000000004e258cc6180e73a69bb0ce18621c8901aed3b792",
+        "0x000000000000000000000000f24629fbb477e10f2cf331c2b7452d8596b5c7a5",
+        "0x0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "sender_contract_decimals": 0,
+      "sender_name": "Wyvern Exchange Contract",
+      "sender_contract_ticker_symbol": null,
+      "sender_address": "0x7f268357a8c2552623316e2562d90e642bb538e5",
+      "sender_address_label": "Wyvern Exchange Contract (-)",
+      "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x7f268357a8c2552623316e2562d90e642bb538e5.png",
+      "raw_log_data": "0x0000000000000000000000000000000000000000000000000000000000000000ada483cf873e6792fb69d95912fc48196cd3e0f7e75dbaa9ecbd5d3fae341b48000000000000000000000000000000000000000000000000054607fc96a60000",
+      "decoded": {
+        "name": "OrdersMatched",
+        "signature": "OrdersMatched(bytes32 buyHash, bytes32 sellHash, indexed address maker, indexed address taker, uint256 price, indexed bytes32 metadata)",
+        "params": [
+          {
+            "name": "buyHash",
+            "type": "bytes32",
+            "indexed": false,
+            "decoded": true,
+            "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+          },
+          {
+            "name": "sellHash",
+            "type": "bytes32",
+            "indexed": false,
+            "decoded": true,
+            "value": "raSDz4c+Z5L7adlZEvxIGWzT4PfnXbqp7L1dP640G0g="
+          },
+          {
+            "name": "maker",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x4e258cc6180e73a69bb0ce18621c8901aed3b792"
+          },
+          {
+            "name": "taker",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0xf24629fbb477e10f2cf331c2b7452d8596b5c7a5"
+          },
+          {
+            "name": "price",
+            "type": "uint256",
+            "indexed": false,
+            "decoded": true,
+            "value": "380000000000000000"
+          },
+          {
+            "name": "metadata",
+            "type": "bytes32",
+            "indexed": true,
+            "decoded": true,
+            "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+          }
+        ]
+      }
+    },
+    {
+      "block_signed_at": "2022-02-18T22:42:06Z",
+      "block_height": 14232808,
+      "tx_offset": 217,
+      "log_offset": 383,
+      "tx_hash": "0x02c53e89c51639004fe7734ae57421b91020fac4f2b238b41036af907169fd22",
+      "raw_log_topics": [
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+        "0x0000000000000000000000004e258cc6180e73a69bb0ce18621c8901aed3b792",
+        "0x0000000000000000000000006d5d031a9331b44995ce0d8dd7260a0d2af1fcd2",
+        "0x0000000000000000000000000000000000000000000000000000000000001fce"
+      ],
+      "sender_contract_decimals": 0,
+      "sender_name": "CatBloxGenesis",
+      "sender_contract_ticker_symbol": "CATBLOXGEN",
+      "sender_address": "0x86c35fa9665002c08801805280ff6a077b23c98a",
+      "sender_address_label": null,
+      "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x86c35fa9665002c08801805280ff6a077b23c98a.png",
+      "raw_log_data": null,
+      "decoded": {
+        "name": "Transfer",
+        "signature": "Transfer(indexed address from, indexed address to, indexed uint256 tokenId)",
+        "params": [
+          {
+            "name": "from",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x4e258cc6180e73a69bb0ce18621c8901aed3b792"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x6d5d031a9331b44995ce0d8dd7260a0d2af1fcd2"
+          },
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "indexed": true,
+            "decoded": true,
+            "value": "8142"
+          }
+        ]
+      }
+    },
+    {
+      "block_signed_at": "2022-02-18T22:42:06Z",
+      "block_height": 14232808,
+      "tx_offset": 217,
+      "log_offset": 382,
+      "tx_hash": "0x02c53e89c51639004fe7734ae57421b91020fac4f2b238b41036af907169fd22",
+      "raw_log_topics": [
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+        "0x0000000000000000000000004e258cc6180e73a69bb0ce18621c8901aed3b792",
+        "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "0x0000000000000000000000000000000000000000000000000000000000001fce"
+      ],
+      "sender_contract_decimals": 0,
+      "sender_name": "CatBloxGenesis",
+      "sender_contract_ticker_symbol": "CATBLOXGEN",
+      "sender_address": "0x86c35fa9665002c08801805280ff6a077b23c98a",
+      "sender_address_label": null,
+      "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x86c35fa9665002c08801805280ff6a077b23c98a.png",
+      "raw_log_data": null,
+      "decoded": {
+        "name": "Approval",
+        "signature": "Approval(indexed address from, indexed address to, indexed uint256 tokenId)",
+        "params": [
+          {
+            "name": "from",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x4e258cc6180e73a69bb0ce18621c8901aed3b792"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x0000000000000000000000000000000000000000"
+          },
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "indexed": true,
+            "decoded": true,
+            "value": "8142"
+          }
+        ]
+      }
+    },
+    {
+      "block_signed_at": "2022-02-18T22:42:06Z",
+      "block_height": 14232808,
+      "tx_offset": 217,
+      "log_offset": 381,
+      "tx_hash": "0x02c53e89c51639004fe7734ae57421b91020fac4f2b238b41036af907169fd22",
+      "raw_log_topics": [
+        "0xc4109843e0b7d514e4c093114b863f8e7d8d9a458c372cd51bfe526b588006c9",
+        "0x0000000000000000000000007e3036bdf9b0413af76d459943a0096dcb1beb11",
+        "0x000000000000000000000000f24629fbb477e10f2cf331c2b7452d8596b5c7a5",
+        "0x0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "sender_contract_decimals": 0,
+      "sender_name": "Wyvern Exchange Contract",
+      "sender_contract_ticker_symbol": null,
+      "sender_address": "0x7f268357a8c2552623316e2562d90e642bb538e5",
+      "sender_address_label": "Wyvern Exchange Contract (-)",
+      "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x7f268357a8c2552623316e2562d90e642bb538e5.png",
+      "raw_log_data": "0x000000000000000000000000000000000000000000000000000000000000000002faa2ef77ae09b7864b3018bf5eb140d8fe05499aaf889af7adf621aaca3175000000000000000000000000000000000000000000000000053eecff4d190000",
+      "decoded": {
+        "name": "OrdersMatched",
+        "signature": "OrdersMatched(bytes32 buyHash, bytes32 sellHash, indexed address maker, indexed address taker, uint256 price, indexed bytes32 metadata)",
+        "params": [
+          {
+            "name": "buyHash",
+            "type": "bytes32",
+            "indexed": false,
+            "decoded": true,
+            "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+          },
+          {
+            "name": "sellHash",
+            "type": "bytes32",
+            "indexed": false,
+            "decoded": true,
+            "value": "Avqi73euCbeGSzAYv16xQNj+BUmar4ia9632IarKMXU="
+          },
+          {
+            "name": "maker",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x7e3036bdf9b0413af76d459943a0096dcb1beb11"
+          },
+          {
+            "name": "taker",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0xf24629fbb477e10f2cf331c2b7452d8596b5c7a5"
+          },
+          {
+            "name": "price",
+            "type": "uint256",
+            "indexed": false,
+            "decoded": true,
+            "value": "378000000000000000"
+          },
+          {
+            "name": "metadata",
+            "type": "bytes32",
+            "indexed": true,
+            "decoded": true,
+            "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+          }
+        ]
+      }
+    },
+    {
+      "block_signed_at": "2022-02-18T22:42:06Z",
+      "block_height": 14232808,
+      "tx_offset": 217,
+      "log_offset": 380,
+      "tx_hash": "0x02c53e89c51639004fe7734ae57421b91020fac4f2b238b41036af907169fd22",
+      "raw_log_topics": [
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+        "0x0000000000000000000000007e3036bdf9b0413af76d459943a0096dcb1beb11",
+        "0x0000000000000000000000006d5d031a9331b44995ce0d8dd7260a0d2af1fcd2",
+        "0x0000000000000000000000000000000000000000000000000000000000002150"
+      ],
+      "sender_contract_decimals": 0,
+      "sender_name": "CatBloxGenesis",
+      "sender_contract_ticker_symbol": "CATBLOXGEN",
+      "sender_address": "0x86c35fa9665002c08801805280ff6a077b23c98a",
+      "sender_address_label": null,
+      "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x86c35fa9665002c08801805280ff6a077b23c98a.png",
+      "raw_log_data": null,
+      "decoded": {
+        "name": "Transfer",
+        "signature": "Transfer(indexed address from, indexed address to, indexed uint256 tokenId)",
+        "params": [
+          {
+            "name": "from",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x7e3036bdf9b0413af76d459943a0096dcb1beb11"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x6d5d031a9331b44995ce0d8dd7260a0d2af1fcd2"
+          },
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "indexed": true,
+            "decoded": true,
+            "value": "8528"
+          }
+        ]
+      }
+    },
+    {
+      "block_signed_at": "2022-02-18T22:42:06Z",
+      "block_height": 14232808,
+      "tx_offset": 217,
+      "log_offset": 379,
+      "tx_hash": "0x02c53e89c51639004fe7734ae57421b91020fac4f2b238b41036af907169fd22",
+      "raw_log_topics": [
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+        "0x0000000000000000000000007e3036bdf9b0413af76d459943a0096dcb1beb11",
+        "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "0x0000000000000000000000000000000000000000000000000000000000002150"
+      ],
+      "sender_contract_decimals": 0,
+      "sender_name": "CatBloxGenesis",
+      "sender_contract_ticker_symbol": "CATBLOXGEN",
+      "sender_address": "0x86c35fa9665002c08801805280ff6a077b23c98a",
+      "sender_address_label": null,
+      "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x86c35fa9665002c08801805280ff6a077b23c98a.png",
+      "raw_log_data": null,
+      "decoded": {
+        "name": "Approval",
+        "signature": "Approval(indexed address from, indexed address to, indexed uint256 tokenId)",
+        "params": [
+          {
+            "name": "from",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x7e3036bdf9b0413af76d459943a0096dcb1beb11"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x0000000000000000000000000000000000000000"
+          },
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "indexed": true,
+            "decoded": true,
+            "value": "8528"
+          }
+        ]
+      }
+    },
+    {
+      "block_signed_at": "2022-02-18T22:42:06Z",
+      "block_height": 14232808,
+      "tx_offset": 217,
+      "log_offset": 378,
+      "tx_hash": "0x02c53e89c51639004fe7734ae57421b91020fac4f2b238b41036af907169fd22",
+      "raw_log_topics": [
+        "0xc4109843e0b7d514e4c093114b863f8e7d8d9a458c372cd51bfe526b588006c9",
+        "0x000000000000000000000000fc4d4a9e7525f212589bdab7120cfcb638b24899",
+        "0x000000000000000000000000f24629fbb477e10f2cf331c2b7452d8596b5c7a5",
+        "0x0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "sender_contract_decimals": 0,
+      "sender_name": "Wyvern Exchange Contract",
+      "sender_contract_ticker_symbol": null,
+      "sender_address": "0x7f268357a8c2552623316e2562d90e642bb538e5",
+      "sender_address_label": "Wyvern Exchange Contract (-)",
+      "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x7f268357a8c2552623316e2562d90e642bb538e5.png",
+      "raw_log_data": "0x00000000000000000000000000000000000000000000000000000000000000007eb588e1e8e4efa4bf1007f1a87b5cde3ea031d9784532f97878f469ff2d0f170000000000000000000000000000000000000000000000000522810a26e50000",
+      "decoded": {
+        "name": "OrdersMatched",
+        "signature": "OrdersMatched(bytes32 buyHash, bytes32 sellHash, indexed address maker, indexed address taker, uint256 price, indexed bytes32 metadata)",
+        "params": [
+          {
+            "name": "buyHash",
+            "type": "bytes32",
+            "indexed": false,
+            "decoded": true,
+            "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+          },
+          {
+            "name": "sellHash",
+            "type": "bytes32",
+            "indexed": false,
+            "decoded": true,
+            "value": "frWI4ejk76S/EAfxqHtc3j6gMdl4RTL5eHj0af8tDxc="
+          },
+          {
+            "name": "maker",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0xfc4d4a9e7525f212589bdab7120cfcb638b24899"
+          },
+          {
+            "name": "taker",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0xf24629fbb477e10f2cf331c2b7452d8596b5c7a5"
+          },
+          {
+            "name": "price",
+            "type": "uint256",
+            "indexed": false,
+            "decoded": true,
+            "value": "370000000000000000"
+          },
+          {
+            "name": "metadata",
+            "type": "bytes32",
+            "indexed": true,
+            "decoded": true,
+            "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="
+          }
+        ]
+      }
+    },
+    {
+      "block_signed_at": "2022-02-18T22:42:06Z",
+      "block_height": 14232808,
+      "tx_offset": 217,
+      "log_offset": 377,
+      "tx_hash": "0x02c53e89c51639004fe7734ae57421b91020fac4f2b238b41036af907169fd22",
+      "raw_log_topics": [
+        "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+        "0x000000000000000000000000fc4d4a9e7525f212589bdab7120cfcb638b24899",
+        "0x0000000000000000000000006d5d031a9331b44995ce0d8dd7260a0d2af1fcd2",
+        "0x0000000000000000000000000000000000000000000000000000000000002368"
+      ],
+      "sender_contract_decimals": 0,
+      "sender_name": "CatBloxGenesis",
+      "sender_contract_ticker_symbol": "CATBLOXGEN",
+      "sender_address": "0x86c35fa9665002c08801805280ff6a077b23c98a",
+      "sender_address_label": null,
+      "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x86c35fa9665002c08801805280ff6a077b23c98a.png",
+      "raw_log_data": null,
+      "decoded": {
+        "name": "Transfer",
+        "signature": "Transfer(indexed address from, indexed address to, indexed uint256 tokenId)",
+        "params": [
+          {
+            "name": "from",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0xfc4d4a9e7525f212589bdab7120cfcb638b24899"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x6d5d031a9331b44995ce0d8dd7260a0d2af1fcd2"
+          },
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "indexed": true,
+            "decoded": true,
+            "value": "9064"
+          }
+        ]
+      }
+    },
+    {
+      "block_signed_at": "2022-02-18T22:42:06Z",
+      "block_height": 14232808,
+      "tx_offset": 217,
+      "log_offset": 376,
+      "tx_hash": "0x02c53e89c51639004fe7734ae57421b91020fac4f2b238b41036af907169fd22",
+      "raw_log_topics": [
+        "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
+        "0x000000000000000000000000fc4d4a9e7525f212589bdab7120cfcb638b24899",
+        "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "0x0000000000000000000000000000000000000000000000000000000000002368"
+      ],
+      "sender_contract_decimals": 0,
+      "sender_name": "CatBloxGenesis",
+      "sender_contract_ticker_symbol": "CATBLOXGEN",
+      "sender_address": "0x86c35fa9665002c08801805280ff6a077b23c98a",
+      "sender_address_label": null,
+      "sender_logo_url": "https://logos.covalenthq.com/tokens/1/0x86c35fa9665002c08801805280ff6a077b23c98a.png",
+      "raw_log_data": null,
+      "decoded": {
+        "name": "Approval",
+        "signature": "Approval(indexed address from, indexed address to, indexed uint256 tokenId)",
+        "params": [
+          {
+            "name": "from",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0xfc4d4a9e7525f212589bdab7120cfcb638b24899"
+          },
+          {
+            "name": "to",
+            "type": "address",
+            "indexed": true,
+            "decoded": true,
+            "value": "0x0000000000000000000000000000000000000000"
+          },
+          {
+            "name": "tokenId",
+            "type": "uint256",
+            "indexed": true,
+            "decoded": true,
+            "value": "9064"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -15,9 +15,10 @@ export const get_covalent_data = async () => {
   const data = [];
   let start = 0;
   global.is_fetching_covalent = true;
+  const controller = new AbortController();
   const startTime = performance.now();
   do {
-    data.push(fetch_5(start).then((res) => res));
+    data.push(fetch_5(start, controller).then((res) => res));
     await sleep(1);
     start += 5;
   } while (global.is_fetching_covalent);
@@ -26,17 +27,22 @@ export const get_covalent_data = async () => {
   return Promise.all(data);
 };
 
-const fetch_1 = async (page: number) => {
+const fetch_1 = async (page: number, controller: AbortController) => {
   const url = new URL(`https://api.covalenthq.com/v1/1/address/${global.walletAddress}/transactions_v2/`);
   const tempParams: any = params;
   tempParams["page-number"] = `${page}`;
   tempParams["key"] = `${process.env.COVALENT_API_KEY}`;
   url.search = new URLSearchParams(params).toString();
 
+  const start = performance.now();
+
   const promise = axios
-    .get(url.toString())
+    .get(url.toString(), { signal: controller.signal })
     .then((res) => res.data)
     .then((data) => {
+      const end = performance.now();
+      console.log(`Fetching Covalent page ${page} took ${end - start} milliseconds`);
+
       if (!data.data.pagination.has_more) {
         global.is_fetching_covalent = false;
       }
@@ -54,15 +60,19 @@ const fetch_1 = async (page: number) => {
       // make a new array from the data and return that.
       return parse(data.data.items);
     })    
-    .catch((error) => {console.log("covalent", error.response.data.error_message)});
+    .catch((error) => {
+      console.log("covalent", error.response.data.error_message)
+      global.request_aborted = true;
+      controller.abort();
+    });
 
   return promise;
 };
 
-const fetch_5 = async (start: number) => {
+const fetch_5 = async (start: number, controller: AbortController) => {
   const data = [];
   for (let i = start; i < start + 5; i++) {
-    data.push(fetch_1(i));
+    data.push(fetch_1(i, controller));
   }
   return Promise.all(data);
 };

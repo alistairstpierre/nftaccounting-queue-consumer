@@ -21,7 +21,9 @@ export function create_looksrare_transaction(
     return create_looksrare_buynow_eth_transaction(item)
   else if (item.log_events[0]?.decoded?.name == log_types.TAKERASK)
     return create_looksrare_bid_transaction(item)
+  else if (item.log_events[0]?.decoded?.name == log_types.CANCEL_MULTIPLE_ORDERS)
+    return create_looksrare_bid_transaction(item)
   else 
-    console.log("unidentified looksrare tx")
+    console.log("unidentified looksrare tx", item.tx_hash)
   return <Transaction>{};
 }
