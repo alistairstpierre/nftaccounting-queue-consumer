@@ -27,12 +27,14 @@ const resetGlobals = () => {
  * @param {Function} ack - callback function
  */
 
+
 const handleRequest = async (payload: any, ack: any) => {
   try {
     console.log("start data processing");
     resetGlobals();
     const payloadData = JSON.parse(payload.content.toString());
     global.walletAddress = payloadData.wallet.toLowerCase();
+    await checkForDBUser();
     pendingStatus();
     global.request_date = await findStartDate();
     console.log(global.walletAddress, global.request_date);
@@ -44,6 +46,7 @@ const handleRequest = async (payload: any, ack: any) => {
       console.log("request aborted");
       failureStatus();
       ack();
+      await disconnectPrisma();
       return;
     }
     const covalent: Transaction[] = [];
@@ -65,6 +68,13 @@ const handleRequest = async (payload: any, ack: any) => {
     const data = trades_parse(preParse);
     
     const tradesWithUrls = await get_image_urls(data.trades);
+    if(global.request_aborted){
+      console.log("request aborted");
+      failureStatus();
+      ack();
+      await disconnectPrisma();
+      return;
+    }
     const mappedTrades = tradesWithUrls.map((trade: Trade) => {
       return {
         purchaseUUID: trade.purchaseUUID,
@@ -101,14 +111,6 @@ const handleRequest = async (payload: any, ack: any) => {
     startTime = performance.now();
     if(mappedTrades.length > 0 || mapped_expenses.length > 0) {
       await updateDB({mappedTrades, mapped_expenses})
-      .then(async () => {
-        await prisma.$disconnect();
-      })
-      .catch(async (e) => {
-        console.error(e);
-        await prisma.$disconnect();
-        process.exit(1);
-      });
       endTime = performance.now();
       console.log(`updating db took ${endTime - startTime} milliseconds`);
     } else {
@@ -121,56 +123,15 @@ const handleRequest = async (payload: any, ack: any) => {
       },
     });
     ack();
+    await disconnectPrisma();
     console.log("data processing complete");
   } catch (error) {
     console.error(error);
   }
 };
 
-async function pendingStatus() {
-  await prisma.user.update({
-    where: { walletAddress: global.walletAddress },
-    data: {
-      dataStatus: DataStatus.PENDING,
-    },
-  });
-}
-
-async function failureStatus() {
-  await prisma.user.update({
-    where: { walletAddress: global.walletAddress },
-    data: {
-      dataStatus: DataStatus.FAILURE,
-    },
-  });
-}
-
-async function findStartDate() {
-  let lastTrade = new Date(0);
-  const user = await prisma.user.findFirst({
-    where: { walletAddress: global.walletAddress },
-  });
-  if (user == null) {
-    return lastTrade;
-  }
-  const trades = await prisma.eRC721Trade.findFirst({
-    where: { walletAddress: global.walletAddress },
-    orderBy: { date: "desc" },
-  });
-  const expenses = await prisma.expense.findFirst({
-    where: { walletAddress: global.walletAddress },
-    orderBy: { date: "desc" },
-  });
-  if (trades != null && expenses == null) lastTrade = trades.date;
-  else if (trades == null && expenses != null) lastTrade = expenses.date;
-  else if (trades != null && expenses != null) {
-    lastTrade = trades.date > expenses.date ? trades.date : expenses.date;
-  }
-  return lastTrade;
-}
-
-async function updateDB({mappedTrades, mapped_expenses}:any) {
-  const user = await prisma.user.findFirst({
+async function checkForDBUser() {
+  await prisma.user.findFirst({
     where: { walletAddress: global.walletAddress },
   }).then((user: any) => {
     if (user == null) {
@@ -181,12 +142,82 @@ async function updateDB({mappedTrades, mapped_expenses}:any) {
       });
     }
   });
-  await prisma.expense.createMany({
-    data: mapped_expenses,
-  })
-  await prisma.eRC721Trade.createMany({
-    data: mappedTrades,
+}
+
+async function disconnectPrisma() {
+  await prisma.$disconnect()
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
   });
+}
+
+async function pendingStatus() {
+  try {
+    await prisma.user.update({
+      where: { walletAddress: global.walletAddress },
+      data: {
+        dataStatus: DataStatus.PENDING,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function failureStatus() {
+  try {
+    await prisma.user.update({
+      where: { walletAddress: global.walletAddress },
+      data: {
+        dataStatus: DataStatus.FAILURE,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+  }
+
+}
+
+async function findStartDate() {
+  let lastTrade = new Date(0);
+  try {
+    const user = await prisma.user.findFirst({
+      where: { walletAddress: global.walletAddress },
+    });
+    if (user == null) {
+      return lastTrade;
+    }
+    const trades = await prisma.eRC721Trade.findFirst({
+      where: { walletAddress: global.walletAddress },
+      orderBy: { date: "desc" },
+    });
+    const expenses = await prisma.expense.findFirst({
+      where: { walletAddress: global.walletAddress },
+      orderBy: { date: "desc" },
+    });
+    if (trades != null && expenses == null) lastTrade = trades.date;
+    else if (trades == null && expenses != null) lastTrade = expenses.date;
+    else if (trades != null && expenses != null) {
+      lastTrade = trades.date > expenses.date ? trades.date : expenses.date;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+  return lastTrade;
+}
+
+async function updateDB({mappedTrades, mapped_expenses}:any) {
+  try {
+    await prisma.expense.createMany({
+      data: mapped_expenses,
+    })
+    await prisma.eRC721Trade.createMany({
+      data: mappedTrades,
+    });
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 async function processUploads() {

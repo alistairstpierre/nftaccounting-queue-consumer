@@ -23,6 +23,7 @@ const fetch_1_moralis = async (next: string | undefined) => {
     })
     .catch(function (error) {
       console.error(error);
+      global.request_aborted = true;
     });
 
   return promise;
@@ -48,7 +49,7 @@ export const get_moralis_data = async () => {
   while (global.is_fetching_moralis) {
     let data = await fetch_1_moralis(next)
       .then((res) => {
-        if (res.cursor != null){
+        if (res.cursor != null && !global.request_aborted){
           next = res.cursor;
           if(global.request_date != null){
             const dateCheck = checkForDate(res.result);

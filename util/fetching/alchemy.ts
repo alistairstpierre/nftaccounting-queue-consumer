@@ -29,7 +29,7 @@ export const get_image_urls = async (trades: Trade[]) => {
       if (nft) {
         if (nft.media[0].gateway.includes("alchemyapi")) {
           element.imgUrl = editAlchemyUrl(nft.media[0].gateway, 40);
-        } 
+        }
         // else if (
         //   nft.media[0].gateway.includes("lh3.googleusercontent.com") ||
         //   nft.media[0].gateway.includes("openseauserdata.com") ||
@@ -74,10 +74,12 @@ const fetch_alchemy_meta_data = async (nfts: LooseObject) => {
     },
   };
 
+  const controller = new AbortController();
   for (let i = 0; i < Object.values(nfts).length; i += 100) {
     await alchemy_call_amount_check();
     const batch = Object.values(nfts).slice(i, i + 100);
-    const response = axios.post(baseURL, { tokens: batch }, options).then((res) => res.data);
+    const response = axios.post(baseURL, { tokens: batch }, options).then((res) => res.data).catch((err) => { controller.abort(); console.log(err); global.request_aborted = true;});
+    if(global.request_aborted) break;
     data.push(response);
   }
   return Promise.all(data);
@@ -86,9 +88,9 @@ const fetch_alchemy_meta_data = async (nfts: LooseObject) => {
 const sleep = (seconds: number) => new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 
 export const alchemy_call_amount_check = async () => {
-  if (globalThis.alchemy_call_amount >= 10) {
-    console.log("alchemy calls at 10 sleeping for 2 seconds");
-    await sleep(2);
+  if (globalThis.alchemy_call_amount >= 5) {
+    console.log("alchemy calls at 5 sleeping for 1.5 seconds");
+    await sleep(1.5);
     console.log("sleep finished");
     globalThis.alchemy_call_amount = 0;
   } else {

@@ -61,7 +61,7 @@ const fetch_1 = async (page: number, controller: AbortController) => {
       return parse(data.data.items);
     })    
     .catch((error) => {
-      console.log("covalent", error.response.data.error_message)
+      console.log(error.code)
       global.request_aborted = true;
       controller.abort();
     });
