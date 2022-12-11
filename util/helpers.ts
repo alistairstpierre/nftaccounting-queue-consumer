@@ -12,30 +12,19 @@ export function get_marketplace(address: string) {
 }
 
 export function create_transaction(
-  type: string, // Covalent
-  tx_hash: string, // Moralis
-  date: string, // Moralis
-  gas: number, // Covalent
-  price?: number, // Moralis
-  collection_name?: string, // Covalent OR Moralis follow up call might be better with gem
-  collection_address?: string, // Covalent OR Moralis follow up call might be better with gem
-  token_ID?: string, // Moralis
-  exchange?: string, // Covalent
-  royalty_fee?: number // Opensea
+  type: string, 
+  tx_hash: string, 
+  date: string, 
+  block: string, 
+  gas?: number, 
+  value?: number
 ): Transaction {
   return <Transaction>{
     type: type,
     tx_hash: tx_hash,
     date: date,
+    block: block,
     gas: gas,
-    ...(price !== undefined && { price: price }),
-    ...(collection_name !== undefined && { collection_name: collection_name }),
-    ...(collection_address !== undefined && {
-      collection_address: collection_address,
-    }),
-    ...(token_ID !== undefined && { token_ID: token_ID }),
-    ...(exchange !== undefined && { exchange: exchange }),
-    ...(royalty_fee !== undefined && { royalty_fee: royalty_fee }),
   };
 }
 

@@ -1,17 +1,36 @@
+import { AssetTransfersCategory } from "alchemy-sdk";
+
 // Transaction
 export interface Transaction {
   type: string;
   tx_hash: string;
   date: string;
+  block: string;
   gas?: number;
-  price?: number;
-  collection_name?: string;
-  collection_address?: string;
-  exchange?: string;
-  token_ID?: string;
-  market_fee?: number;
-  royalty_fee?: number;
-  contract?: ContractType;
+  value?: number;
+}
+
+export interface EtherscanResult {
+  blockNumber: string;
+  timeStamp: string;
+  hash: string;
+  nonce: string;
+  blockHash: string;
+  transactionIndex: string;
+  from: string;
+  to: string;
+  value: string;
+  gas: string;
+  gasPrice: string;
+  isError: string;
+  txreceipt_status: string;
+  input: string;
+  contractAddress: string;
+  cumulativeGasUsed: string;
+  gasUsed: string;
+  confirmations: string;
+  methodId: string;
+  functionName: string;
 }
 
 export interface GroupedCollection {

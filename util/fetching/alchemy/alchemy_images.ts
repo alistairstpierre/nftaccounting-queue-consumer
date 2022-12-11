@@ -1,4 +1,4 @@
-import { Trade } from "../../interfaces";
+import { Trade } from "../../../interfaces";
 import axios from "axios";
 
 interface LooseObject {

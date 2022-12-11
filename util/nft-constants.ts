@@ -19,6 +19,9 @@ export const tx_type = {
   CANCELLED: "Cancelled",
   MINT: "Mint",
   LISTING: "Listing",
+  SWAP: "Swap",
+  MISC: "Misc",
+  STAKE: "Stake",
   OPENSEA_EXPENSE: "Opensea Expense",
   OPENSEA_BUYNOW_PURCHASE: "Opensea Purchase",
   OPENSEA_BUYNOW_SALE: "Opensea Sale",
@@ -105,6 +108,7 @@ export const marketplaceDetails: MarketplaceDetails[] = [
       Opensea_03: "0xa5409ec958c83c3f309868babaca7c86dcb077c1",
       Opensea_04: "0x495f947276749ce646f68ac8c248420045cb7b5e",
       Seaport: "0x00000000006c3852cbef3e08e8df289169ede581",
+      AlphaSharks: "0x552b16d19dbad7af2786fe5a40d96d2a5c09428c"
     },
     sellerFee: 0.025,
   },
