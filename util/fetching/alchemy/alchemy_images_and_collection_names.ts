@@ -5,44 +5,40 @@ interface LooseObject {
   [key: string]: any;
 }
 
-export const get_image_urls = async (trades: Trade[]) => {
+export const get_alchemy_imageurls_and_collectionnames = async (trades: Trade[]) => {
   // organize data into a format that alchemy can accept
   const startTime = performance.now();
   const nfts: LooseObject = {};
   trades.forEach((element) => {
-    if (element.contract && element.contract.toLowerCase() == "erc721") {
-      if (element.projectAddress && element.tokenId)
-        nfts[`${element.projectAddress}${element.tokenId}`] = { contractAddress: element.projectAddress, tokenId: element.tokenId };
-    } else {
-      if (element.projectAddress && !nfts.hasOwnProperty(element.projectAddress)) {
-        nfts[element.projectAddress] = { contractAddress: element.projectAddress, tokenId: element.tokenId };
-      }
-    }
+    if (element.projectAddress && element.tokenId)
+      nfts[`${element.projectAddress}${element.tokenId}`] = { contractAddress: element.projectAddress, tokenId: element.tokenId };
   });
-  let data = await fetch_alchemy_meta_data(nfts);
-  data = data.flat();
+  let data: any = await fetch_alchemy_meta_data(nfts)
+    .then((res) => {
+      return res.flat();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
   // find the image url for each nft and add it to the trade
   // check to see if it has an editable url or not, if not just use the collection url for now.
+  //console.log(data.filter((x: any) => x.contract.address == "0xc850d7e5aa630f18ff5d786b3c75b3ef3646e012"));
   trades.forEach((element) => {
     if (element.projectAddress && element.tokenId) {
-      const nft = data.find((x: any) => x.id.tokenId == element.tokenId && x.contract.address == element.projectAddress);
+      const nft = data.find((x: any) => x.contract.address == element.projectAddress && x.id.tokenId == element.tokenId);
       if (nft) {
+        element.projectName = nft.contractMetadata.name;
         if (nft.media[0].gateway.includes("alchemyapi")) {
           element.imgUrl = editAlchemyUrl(nft.media[0].gateway, 40);
         }
-        // else if (
-        //   nft.media[0].gateway.includes("lh3.googleusercontent.com") ||
-        //   nft.media[0].gateway.includes("openseauserdata.com") ||
-        //   nft.media[0].gateway.includes("i.seadn.io") ||
-        //   nft.media[0].gateway.includes("ipfs.io")
-        // ) {
-        //   element.img_url = nft.media[0].gateway;
-        // } 
         else {
           element.imgUrl = editOpenseaUrl(nft.contractMetadata.openSea.imageUrl, 250);
         }
-        if (!element.projectName) element.projectName = nft.contractMetadata.name;
       }
+    }
+    if(element.projectName == undefined){
+      console.log(element)
     }
   });
   const endTime = performance.now();
@@ -78,8 +74,8 @@ const fetch_alchemy_meta_data = async (nfts: LooseObject) => {
   for (let i = 0; i < Object.values(nfts).length; i += 100) {
     await alchemy_call_amount_check();
     const batch = Object.values(nfts).slice(i, i + 100);
-    const response = axios.post(baseURL, { tokens: batch }, options).then((res) => res.data).catch((err) => { controller.abort(); console.log(err); global.request_aborted = true;});
-    if(global.request_aborted) break;
+    const response = axios.post(baseURL, { tokens: batch }, options).then((res) => res.data).catch((err) => { controller.abort(); console.log(err); global.request_aborted = true; });
+    if (global.request_aborted) break;
     data.push(response);
   }
   return Promise.all(data);

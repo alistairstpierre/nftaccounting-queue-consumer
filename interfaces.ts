@@ -4,10 +4,18 @@ import { AssetTransfersCategory } from "alchemy-sdk";
 export interface Transaction {
   type: string;
   tx_hash: string;
-  date: string;
+  date: Date;
   block: string;
   gas?: number;
   value?: number;
+  marketplace?: string;
+  royalty?: number;
+  collection_contract?: string;
+  collection_name?: string;
+  token_id?: string;
+  market_fee?: number;
+  category?: AssetTransfersCategory;
+  uuid?: string;
 }
 
 export interface EtherscanResult {
@@ -54,15 +62,14 @@ export interface Trade {
   tokenId?: string;
   projectAddress?: string;
   projectName?: string;
-  date: string;
+  date: Date;
   cost?: number;
   sale?: number;
   feeGas?: number;
   feeExchange?: number;
   feeRoyalty?: number;
-  profit: number;
   notes?: string;
-  contract?: ContractType;
+  contract?: AssetTransfersCategory;
 }
 
 export interface TradeDisplay {
@@ -93,7 +100,7 @@ export interface MoralisItem {
   transaction_index: number;
   log_index: number;
   value: string;
-  contract_type: ContractType;
+  contract_type: AssetTransfersCategory;
   transaction_type: TransactionType;
   token_address: string;
   token_id: string;
@@ -105,11 +112,6 @@ export interface MoralisItem {
 
 export enum Chain {
   The0X1 = "0x1",
-}
-
-export enum ContractType {
-  Erc721 = "ERC721",
-  Erc1155 = "ERC1155",
 }
 
 export enum TransactionType {

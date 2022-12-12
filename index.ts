@@ -1,14 +1,19 @@
 
-import { get_image_urls } from "./util/fetching/alchemy/alchemy_images";
+import { get_alchemy_imageurls_and_collectionnames } from "./util/fetching/alchemy/alchemy_images_and_collection_names";
 import { get_alchemy_asset_transfers } from "./util/fetching/alchemy/alchemy_getAssetTransfers";
 import Broker from "./services/rabbitMQ";
 import { PrismaClient, DataStatus } from "@prisma/client";
 import { prependListener } from 'process';
 import { get_alchemy_nft_sales } from './util/fetching/alchemy/alchemy_getNFTSales';
 import { get_alchemy_nft_purchases } from './util/fetching/alchemy/alchemy_getNFTPurchases';
-import { get_etherscan_asset_transfers } from './util/fetching/etherscan/etherscan_getNormalTransactions';
-import { parse_etherscan_transactions } from './util/parsing/etherscan/etherscan_parseTransactions';
-import { parse_alchemy_market_transactions } from "./util/parsing/alchemy/alchemy_parseMarketTransaction";
+import { get_etherscan_normal_transactions } from './util/fetching/etherscan/etherscan_getNormalTransactions';
+import { get_etherscan_internal_transactions } from "./util/fetching/etherscan/etherscan_getInternalTransactions";
+import { parse_transactions } from "./util/parsing/parse_transactions";
+import { get_etherscan_erc1155_transactions } from './util/fetching/etherscan/etherscan_getERC1155Transactions';
+import { get_etherscan_erc721_transactions } from './util/fetching/etherscan/etherscan_getERC721Transactions';
+import { get_etherscan_erc20_transactions } from "./util/fetching/etherscan/etherscan_getERC20Transactions";
+import { trades_parse } from "./util/parsing/trades";
+import { Trade, Transaction } from "./interfaces";
 
 const { promisify } = require("util");
 const RMQConsumer = new Broker().init();
@@ -21,6 +26,7 @@ const resetGlobals = () => {
   global.is_fetching_nft_purchases = false;
   global.is_fetching_etherscan_transactions = false;
   global.request_aborted = false;
+  global.request_date = new Date();
   global.request_block = 0;
   global.alchemy_call_amount = 0;
 }
@@ -37,103 +43,88 @@ const handleRequest = async (payload: any, ack: any) => {
     resetGlobals();
     const payloadData = JSON.parse(payload.content.toString());
     global.walletAddress = payloadData.wallet.toLowerCase();
-    const data = await Promise.all([get_etherscan_asset_transfers(), get_alchemy_asset_transfers(), get_alchemy_nft_sales(), get_alchemy_nft_purchases()]);
-    const etherscan_parsed_transactions = await parse_etherscan_transactions(data[0], data[1]);
-    const alchemy_parsed_transactions = await parse_alchemy_market_transactions(etherscan_parsed_transactions, data[2], data[3]);
-    //console.log(etherscanData);
-    //console.log(alchemyData)
-    //   await checkForDBUser();
-    //   pendingStatus();
-    //   global.request_date = await findStartDate();
-    //   console.log(global.walletAddress, global.request_date);
-    //   let startTime = performance.now();
-    //   const added: any = await Promise.all([get_covalent_data(), get_moralis_data()]);
-    //   let endTime = performance.now();
-    //   console.log("fetching and parsing covalent and morlais data took " + (endTime - startTime) + " milliseconds.");
-    //   if(global.request_aborted){
-    //     console.log("request aborted");
-    //     failureStatus();
-    //     ack();
-    //     await disconnectPrisma();
-    //     return;
-    //   }
-    //   const covalent: Transaction[] = [];
-    //   const moralis: MoralisItem[] = [];
-    //   added[0].forEach((item: any) => {
-    //     item.forEach((element: any) => {
-    //       element.forEach((obj: any) => {
-    //         covalent.push(obj);
-    //       });
-    //     });
-    //   });
-    //   added[1].forEach((item: any) => {
-    //     item.forEach((element: any) => {
-    //       moralis.push(element);
-    //     });
-    //   });
+    await checkForDBUser();
+    pendingStatus();
+    global.request_date = await findStartDate();
+    console.log(global.walletAddress, global.request_date);
+    let startTime = performance.now();
+    const fetched_data = await Promise.all([
+      get_etherscan_normal_transactions(),
+      get_etherscan_internal_transactions(),
+      get_etherscan_erc20_transactions(),
+      get_etherscan_erc721_transactions(),
+      get_etherscan_erc1155_transactions(),
+      get_alchemy_asset_transfers(),
+      get_alchemy_nft_sales(),
+      get_alchemy_nft_purchases()]);
+    const parsed_transactions = await parse_transactions(fetched_data);
+    let endTime = performance.now();
+    console.log("fetching and parsing alchemy and etherscan data took " + (endTime - startTime) + " milliseconds.");
+    if (global.request_aborted) {
+      console.log("request aborted");
+      failureStatus();
+      ack();
+      await disconnectPrisma();
+      return;
+    }
+    const data = trades_parse(parsed_transactions.purchases, parsed_transactions.sales);
 
-    //   const preParse = moralis_parse(moralis, covalent);
+    const tradesWithUrlsAndCollectionNames = await get_alchemy_imageurls_and_collectionnames(data.trades);
+    if (global.request_aborted) {
+      console.log("request aborted");
+      failureStatus();
+      ack();
+      await disconnectPrisma();
+      return;
+    }
+    const mappedTrades = await tradesWithUrlsAndCollectionNames.map((trade: Trade) => {
+      return {
+        purchaseUUID: trade.purchaseUUID,
+        saleUUID: trade.saleUUID,
+        date: trade.date,
+        purchaseType: trade.purchaseType,
+        purchaseTransaction: trade.purchaseTransaction,
+        saleType: trade.saleType,
+        SaleTransaction: trade.SaleTransaction,
+        imgUrl: trade.imgUrl,
+        tokenId: trade.tokenId,
+        contract: trade.contract,
+        projectAddress: trade.projectAddress,
+        projectName: trade.projectName,
+        cost: trade.cost,
+        sale: trade.sale,
+        feeGas: trade.feeGas,
+        feeExchange: trade.feeExchange,
+        feeRoyalty: trade.feeRoyalty,
+        walletAddress: global.walletAddress,
+      };
+    });
 
-    //   const data = trades_parse(preParse);
-
-    //   const tradesWithUrls = await get_image_urls(data.trades);
-    //   if(global.request_aborted){
-    //     console.log("request aborted");
-    //     failureStatus();
-    //     ack();
-    //     await disconnectPrisma();
-    //     return;
-    //   }
-    //   const mappedTrades = tradesWithUrls.map((trade: Trade) => {
-    //     return {
-    //       purchaseUUID: trade.purchaseUUID,
-    //       saleUUID: trade.saleUUID,
-    //       date: trade.date,
-    //       purchaseType: trade.purchaseType,
-    //       purchaseTransaction: trade.purchaseTransaction,
-    //       saleType: trade.saleType,
-    //       SaleTransaction: trade.SaleTransaction,
-    //       imgUrl: trade.imgUrl,
-    //       tokenId: trade.tokenId,
-    //       contract: trade.contract,
-    //       projectAddress: trade.projectAddress,
-    //       projectName: trade.projectName,
-    //       cost: trade.cost,
-    //       sale: trade.sale,
-    //       feeGas: trade.feeGas,
-    //       feeExchange: trade.feeExchange,
-    //       feeRoyalty: trade.feeRoyalty,
-    //       profit: trade.profit,
-    //       walletAddress: global.walletAddress,
-    //     };
-    //   });
-
-    //   const expenses = data.cancels.concat(data.listings, data.failures, data.opensea_expenses);
-    //   const mapped_expenses = expenses.map((expense: Transaction) => {
-    //     return {
-    //       cost: expense.gas,
-    //       date: expense.date,
-    //       type: expense.type,
-    //       walletAddress: global.walletAddress,
-    //     }
-    //   });
-    //   startTime = performance.now();
-    //   if(mappedTrades.length > 0 || mapped_expenses.length > 0) {
-    //     await updateDB({mappedTrades, mapped_expenses})
-    //     endTime = performance.now();
-    //     console.log(`updating db took ${endTime - startTime} milliseconds`);
-    //   } else {
-    //     console.log("no new data");
-    //   }
-    //   await prisma.user.update({
-    //     where: { walletAddress: global.walletAddress },
-    //     data: {
-    //       dataStatus: DataStatus.SUCCESS,
-    //     },
-    //   });
-    //   ack();
-    //   await disconnectPrisma();
-    //   console.log("data processing complete");
+    const mapped_expenses = parsed_transactions.other.map((expense: Transaction) => {
+      return {
+        cost: expense.gas,
+        date: expense.date,
+        type: expense.type,
+        walletAddress: global.walletAddress,
+      }
+    });
+    // startTime = performance.now();
+    // if (mappedTrades.length > 0 || mapped_expenses.length > 0) {
+    //   await updateDB({ mappedTrades, mapped_expenses })
+    //   endTime = performance.now();
+    //   console.log(`updating db took ${endTime - startTime} milliseconds`);
+    // } else {
+    //   console.log("no new data");
+    // }
+    // await prisma.user.update({
+    //   where: { walletAddress: global.walletAddress },
+    //   data: {
+    //     dataStatus: DataStatus.SUCCESS,
+    //   },
+    // });
+    // ack();
+    await disconnectPrisma();
+    console.log("data processing complete");
   } catch (error) {
     console.error(error);
   }

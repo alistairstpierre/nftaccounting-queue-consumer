@@ -1,4 +1,4 @@
-import { marketplaceDetails, purchase_type, type_wth_gas_cost } from "./nft-constants";
+import { marketplaceDetails } from "./nft-constants";
 import { exchange as exc }  from "./nft-constants";
 import { Transaction } from "../interfaces";
 
@@ -9,23 +9,6 @@ export function get_marketplace(address: string) {
     }
   }
   return undefined;
-}
-
-export function create_transaction(
-  type: string, 
-  tx_hash: string, 
-  date: string, 
-  block: string, 
-  gas?: number, 
-  value?: number
-): Transaction {
-  return <Transaction>{
-    type: type,
-    tx_hash: tx_hash,
-    date: date,
-    block: block,
-    gas: gas,
-  };
 }
 
 export const log_types = {
@@ -71,14 +54,6 @@ export function getExchangeFee(exchange: string | undefined, price: number | und
       const xy = marketplaceDetails.find(x => x.marketplace == exc.X2Y2)
       if(xy != undefined && xy.sellerFee != undefined) return price * xy.sellerFee;
       break;
-  }
-  return 0;
-}
-
-export function getGasFee(type: string, gas: number | undefined) {
-  if(gas === undefined) return 0;
-  if(type_wth_gas_cost.includes(type)){
-    return gas
   }
   return 0;
 }

@@ -8,6 +8,7 @@ declare global {
   var walletAddress: string;
   var request_queue: Array;
   var request_block: number;
+  var request_date: Date;
   var request_aborted: boolean;
 }
   

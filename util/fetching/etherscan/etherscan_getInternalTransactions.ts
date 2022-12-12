@@ -3,12 +3,12 @@ import { EtherscanResult } from "../../../interfaces";
 
 const params = {
     module: "account",
-    action: "txlist",
+    action: "txlistinternal",
     offset: "10000",
     apikey: `${process.env.ETHERSCAN_API_KEY}`,
 };
 
-export const get_etherscan_normal_transactions = async () => {
+export const get_etherscan_internal_transactions = async () => {
     global.is_fetching_etherscan_transactions = true;
     const startTime = performance.now();
     return fetch_1() as Promise<EtherscanResult[]>;

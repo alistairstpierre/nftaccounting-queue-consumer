@@ -39,7 +39,6 @@ model ERC721Trade {
   feeGas              Float    @db.Real
   feeExchange         Float    @db.Real
   feeRoyalty          Float?   @db.Real
-  profit              Float    @db.Real
   Note                Note?
 }
 
