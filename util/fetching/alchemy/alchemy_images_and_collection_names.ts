@@ -31,15 +31,17 @@ export const get_alchemy_imageurls_and_collectionnames = async (trades: Trade[])
         element.projectName = nft.contractMetadata.name;
         if (nft.media[0].gateway.includes("alchemyapi")) {
           element.imgUrl = editAlchemyUrl(nft.media[0].gateway, 40);
+        } else if(nft.contractMetadata.openSea.imageUrl != undefined){
+          element.imgUrl = editOpenseaUrl(nft.contractMetadata.openSea.imageUrl, 250);
         }
         else {
-          element.imgUrl = editOpenseaUrl(nft.contractMetadata.openSea.imageUrl, 250);
+          element.imgUrl = nft.metadata.image;
         }
       }
     }
-    if(element.projectName == undefined){
-      console.log(element)
-    }
+    // if(element.tokenId == undefined){
+    //   console.log(element)
+    // }
   });
   const endTime = performance.now();
   console.log(`Fetch images took ${endTime - startTime} milliseconds`);
@@ -47,9 +49,14 @@ export const get_alchemy_imageurls_and_collectionnames = async (trades: Trade[])
 };
 
 const editOpenseaUrl = (url: string, size: number) => {
-  const split = url.split("?w=500&auto=format");
-  split[1] = `?w=${size}&auto=format`;
-  return split.join("");
+  try {
+    const split = url.split("?w=500&auto=format");
+    split[1] = `?w=${size}&auto=format`;
+    return split.join("");
+  } catch (error) {
+    console.log(error);
+    console.log(url);
+  }
 };
 
 const editAlchemyUrl = (url: string, size: number) => {

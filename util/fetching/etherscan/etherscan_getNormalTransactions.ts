@@ -26,9 +26,9 @@ const fetch_1 = async () => {
         .then((data) => {
             const end = performance.now();
             console.log(`Fetching etherscan took ${end - start} milliseconds`);
-            if (data.result.length < params.offset) {
-                global.is_fetching_etherscan_transactions = false;
-            }
+            // if (data.result.length < params.offset) {
+            //     global.is_fetching_etherscan_transactions = false;
+            // }
             return data.result;
         })
         .catch((error) => {

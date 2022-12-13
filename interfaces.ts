@@ -39,6 +39,7 @@ export interface EtherscanResult {
   confirmations: string;
   methodId: string;
   functionName: string;
+  tokenID: string;
 }
 
 export interface GroupedCollection {
@@ -62,7 +63,10 @@ export interface Trade {
   tokenId?: string;
   projectAddress?: string;
   projectName?: string;
-  date: Date;
+  purchaseDate: Date;
+  saleDate?: Date;
+  purchaseBlock: number;
+  saleBlock?: number;
   cost?: number;
   sale?: number;
   feeGas?: number;

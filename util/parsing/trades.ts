@@ -5,8 +5,8 @@ import { purchase_type, sale_type, tx_type } from "../nft-constants";
 export function trades_parse(purchases: Transaction[], sales: Transaction[]) {
     const trades: Trade[] = [];
     const startTime = performance.now();
-    for(const tx of purchases) {
-        if(tx == undefined) continue;
+    for (const tx of purchases) {
+        if (tx == undefined) continue;
         // if a transaction is a tx type, find its corresponding sale
         // get an array of potential matches
         const potentialMatches = sales.filter((t) => t.collection_contract === tx.collection_contract && t.token_id === tx.token_id)
@@ -18,8 +18,8 @@ export function trades_parse(purchases: Transaction[], sales: Transaction[]) {
         }
 
         const trade: Trade = {
-            purchaseUUID: tx.uuid ? tx.uuid : `${tx.tx_hash}-${tx.collection_contract}-${tx.token_id}`,
-            saleUUID: match != undefined ? (match.uuid ? match.uuid : `${match.tx_hash}-${tx.collection_contract}-${tx.token_id}`) : undefined,
+            purchaseUUID: `${tx.tx_hash}-${tx.collection_contract}-${tx.token_id}`,
+            saleUUID: match != undefined ? `${match.tx_hash}-${tx.collection_contract}-${tx.token_id}` : undefined,
             purchaseType: tx.type,
             purchaseTransaction: tx.tx_hash,
             saleType: match != undefined ? match.type : undefined,
@@ -28,16 +28,38 @@ export function trades_parse(purchases: Transaction[], sales: Transaction[]) {
             tokenId: tx.token_id,
             projectAddress: tx.collection_contract,
             projectName: undefined,
-            date: tx.date,
+            purchaseDate: tx.date,
+            saleDate: match != undefined ? match.date : undefined,
+            purchaseBlock: Number(tx.block),
+            saleBlock: match != undefined ? Number(match.block) : undefined,
             cost: tx.value,
             sale: match != undefined ? match.value : undefined,
             feeGas: match != undefined ? (match.gas != undefined ? match.gas : 0) + (tx.gas != undefined ? tx.gas : 0) : 0,
-            feeExchange: match != undefined ? match.market_fee : 0,
-            feeRoyalty: match != undefined ? match.royalty : 0,
+            feeExchange: match != undefined ? (match.market_fee != undefined ? match.market_fee : 0) : 0,
+            feeRoyalty: match != undefined ? (match.royalty != undefined ? match.royalty : 0) : 0,
             contract: tx.category,
         };
         trades.push(trade);
     };
+
+    for (const trade of trades) {
+        const t = trades.filter((t: Trade) => t.purchaseUUID == trade.purchaseUUID);
+        if (t.length > 1) {
+            for (let i = 0; i < t.length; i++) {
+                t[i].purchaseUUID = `${t[i].purchaseUUID}-${i}`;
+            }
+        }
+
+        const s = trades.filter((t: Trade) => trade.saleUUID != undefined && t.saleUUID == trade.saleUUID);
+        if (s.length > 1) {
+            for (let i = 0; i < s.length; i++) {
+                s[i].saleUUID = `${s[i].saleUUID}-${i}`;
+            }
+        }
+    }
+
+    //console.log(trades)
+
     const endTime = performance.now();
     console.log(`Parse Trades took ${endTime - startTime} milliseconds`);
     return { trades };

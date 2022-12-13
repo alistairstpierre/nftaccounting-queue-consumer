@@ -45,13 +45,14 @@ const handleRequest = async (payload: any, ack: any) => {
     global.walletAddress = payloadData.wallet.toLowerCase();
     await checkForDBUser();
     pendingStatus();
-    global.request_date = await findStartDate();
-    console.log(global.walletAddress, global.request_date);
+    const startDateAndBlock = await findStartDate();
+    global.request_date = startDateAndBlock.date;
+    global.request_block = startDateAndBlock.block;
+    console.log(global.walletAddress, global.request_date, global.request_block);
     let startTime = performance.now();
     const fetched_data = await Promise.all([
       get_etherscan_normal_transactions(),
       get_etherscan_internal_transactions(),
-      get_etherscan_erc20_transactions(),
       get_etherscan_erc721_transactions(),
       get_etherscan_erc1155_transactions(),
       get_alchemy_asset_transfers(),
@@ -77,11 +78,15 @@ const handleRequest = async (payload: any, ack: any) => {
       await disconnectPrisma();
       return;
     }
+    
     const mappedTrades = await tradesWithUrlsAndCollectionNames.map((trade: Trade) => {
       return {
         purchaseUUID: trade.purchaseUUID,
         saleUUID: trade.saleUUID,
-        date: trade.date,
+        purchaseDate: trade.purchaseDate,
+        saleDate: trade.saleDate,
+        purchaseBlock: trade.purchaseBlock,
+        saleBlock: trade.saleBlock,
         purchaseType: trade.purchaseType,
         purchaseTransaction: trade.purchaseTransaction,
         saleType: trade.saleType,
@@ -100,28 +105,37 @@ const handleRequest = async (payload: any, ack: any) => {
       };
     });
 
+    for(const trade of mappedTrades){
+      const trades = mappedTrades.filter((t: Trade) => t.saleUUID != undefined && t.saleUUID === trade.saleUUID);
+      if(trades.length > 1){
+        console.log(trades);
+        break;
+      } 
+    }
+
     const mapped_expenses = parsed_transactions.other.map((expense: Transaction) => {
       return {
         cost: expense.gas,
         date: expense.date,
+        blockNumber: Number(expense.block),
         type: expense.type,
         walletAddress: global.walletAddress,
       }
     });
-    // startTime = performance.now();
-    // if (mappedTrades.length > 0 || mapped_expenses.length > 0) {
-    //   await updateDB({ mappedTrades, mapped_expenses })
-    //   endTime = performance.now();
-    //   console.log(`updating db took ${endTime - startTime} milliseconds`);
-    // } else {
-    //   console.log("no new data");
-    // }
-    // await prisma.user.update({
-    //   where: { walletAddress: global.walletAddress },
-    //   data: {
-    //     dataStatus: DataStatus.SUCCESS,
-    //   },
-    // });
+    startTime = performance.now();
+    if (mappedTrades.length > 0 || mapped_expenses.length > 0) {
+      await updateDB({ mappedTrades, mapped_expenses })
+      endTime = performance.now();
+      console.log(`updating db took ${endTime - startTime} milliseconds`);
+    } else {
+      console.log("no new data");
+    }
+    await prisma.user.update({
+      where: { walletAddress: global.walletAddress },
+      data: {
+        dataStatus: DataStatus.SUCCESS,
+      },
+    });
     // ack();
     await disconnectPrisma();
     console.log("data processing complete");
@@ -181,30 +195,42 @@ async function failureStatus() {
 
 async function findStartDate() {
   let lastTrade = new Date(0);
+  let lastBlock = 0;
   try {
     const user = await prisma.user.findFirst({
       where: { walletAddress: global.walletAddress },
     });
     if (user == null) {
-      return lastTrade;
+      return {date: lastTrade, block: lastBlock};
     }
-    const trades = await prisma.eRC721Trade.findFirst({
+    const purchaseDates = await prisma.eRC721Trade.findFirst({
       where: { walletAddress: global.walletAddress },
-      orderBy: { date: "desc" },
+      orderBy: { purchaseDate: "desc" },
     });
+    const saleDates = await prisma.eRC721Trade.findFirst({
+      where: { walletAddress: global.walletAddress },
+      orderBy: { saleDate: "desc" },
+    })
     const expenses = await prisma.expense.findFirst({
       where: { walletAddress: global.walletAddress },
       orderBy: { date: "desc" },
     });
-    if (trades != null && expenses == null) lastTrade = trades.date;
-    else if (trades == null && expenses != null) lastTrade = expenses.date;
-    else if (trades != null && expenses != null) {
-      lastTrade = trades.date > expenses.date ? trades.date : expenses.date;
+    if (purchaseDates != null){
+      lastBlock = lastTrade > purchaseDates.purchaseDate ? lastBlock : purchaseDates.purchaseBlock;
+      lastTrade = lastTrade > purchaseDates.purchaseDate ? lastTrade : purchaseDates.purchaseDate;
     }
+    if (saleDates != null && saleDates.saleDate != null && saleDates.saleBlock != null){
+      lastBlock = lastTrade > saleDates.purchaseDate ? lastBlock : saleDates.saleBlock;
+      lastTrade = lastTrade > saleDates.saleDate ? lastTrade : saleDates.saleDate;
+    } 
+    if (expenses != null){
+      lastBlock = lastTrade > expenses.date ? lastBlock : expenses.blockNumber;
+      lastTrade = lastTrade > expenses.date ? lastTrade : expenses.date;
+    } 
   } catch (error) {
     console.error(error);
   }
-  return lastTrade;
+  return {date: lastTrade, block: lastBlock};
 }
 
 async function updateDB({ mappedTrades, mapped_expenses }: any) {

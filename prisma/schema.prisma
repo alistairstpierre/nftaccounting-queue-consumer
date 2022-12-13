@@ -14,31 +14,35 @@ model Expense {
   id            Int      @id @default(autoincrement())
   cost          Float    @db.Real
   date          DateTime
+  blockNumber   Int      @db.Integer
   type          String   @db.VarChar(100)
   user          User     @relation(fields: [walletAddress], references: [walletAddress])
   walletAddress String   @db.VarChar(100)
 }
 
 model ERC721Trade {
-  purchaseUUID        String   @id @unique @db.VarChar(255)
-  saleUUID            String?  @unique @db.VarChar(255)
-  walletAddress       String   @db.VarChar(100)
-  user                User     @relation(fields: [walletAddress], references: [walletAddress])
-  date                DateTime
-  purchaseType        String   @db.VarChar(100)
-  purchaseTransaction String   @db.VarChar(100)
-  saleType            String?  @db.VarChar(100)
-  SaleTransaction     String?  @db.VarChar(100)
-  imgUrl              String   @db.VarChar(255)
-  tokenId             String   @db.VarChar(100)
-  contract            String   @db.VarChar(100)
-  projectAddress      String   @db.VarChar(100)
-  projectName         String   @db.VarChar(255)
-  cost                Float    @db.Real
-  sale                Float?   @db.Real
-  feeGas              Float    @db.Real
-  feeExchange         Float    @db.Real
-  feeRoyalty          Float?   @db.Real
+  purchaseUUID        String    @id @unique @db.VarChar(255)
+  saleUUID            String?   @unique @db.VarChar(255)
+  walletAddress       String    @db.VarChar(100)
+  user                User      @relation(fields: [walletAddress], references: [walletAddress])
+  purchaseDate        DateTime
+  saleDate            DateTime?
+  purchaseBlock       Int       @db.Integer
+  saleBlock           Int?      @db.Integer
+  purchaseType        String    @db.VarChar(100)
+  purchaseTransaction String    @db.VarChar(100)
+  saleType            String?   @db.VarChar(100)
+  SaleTransaction     String?   @db.VarChar(100)
+  imgUrl              String    @db.VarChar(255)
+  tokenId             String    @db.VarChar(100)
+  contract            String    @db.VarChar(100)
+  projectAddress      String    @db.VarChar(100)
+  projectName         String    @db.VarChar(255)
+  cost                Float     @db.Real
+  sale                Float?    @db.Real
+  feeGas              Float     @db.Real
+  feeExchange         Float     @db.Real
+  feeRoyalty          Float?    @db.Real
   Note                Note?
 }
 
