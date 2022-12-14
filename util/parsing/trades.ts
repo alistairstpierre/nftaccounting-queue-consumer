@@ -1,6 +1,16 @@
+import { match } from "assert";
 import { Trade, Transaction } from "../../interfaces"
 import { getExchangeFee } from "../helpers";
 import { purchase_type, sale_type, tx_type } from "../nft-constants";
+
+const getMarketFee = (marketplace: string|undefined, match: Transaction|undefined) => {
+    if(marketplace == undefined || match == undefined) return 0;
+    if(marketplace.toLowerCase().includes("opensea")) return 0.025 * (match.value? match.value : 0);
+    if(marketplace.toLowerCase().includes("rarible")) return 0.01 * (match.value? match.value : 0);
+    if(marketplace.toLowerCase().includes("looksrare")) return 0.02 * (match.value? match.value : 0);
+    if(marketplace.toLowerCase().includes("x2y2")) return 0.005 * (match.value? match.value : 0);
+    return 0;
+}
 
 export function trades_parse(purchases: Transaction[], sales: Transaction[]) {
     const trades: Trade[] = [];
@@ -35,7 +45,7 @@ export function trades_parse(purchases: Transaction[], sales: Transaction[]) {
             cost: tx.value,
             sale: match != undefined ? match.value : undefined,
             feeGas: match != undefined ? (match.gas != undefined ? match.gas : 0) + (tx.gas != undefined ? tx.gas : 0) : 0,
-            feeExchange: match != undefined ? (match.market_fee != undefined ? match.market_fee : 0) : 0,
+            feeExchange: match != undefined ? (match.market_fee != undefined ? match.market_fee : getMarketFee(match.marketplace ,match)) : 0,
             feeRoyalty: match != undefined ? (match.royalty != undefined ? match.royalty : 0) : 0,
             contract: tx.category,
         };

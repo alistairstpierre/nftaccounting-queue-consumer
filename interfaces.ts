@@ -18,7 +18,38 @@ export interface Transaction {
   uuid?: string;
 }
 
+export interface NFTPortRoyalty {
+  royalty_share: number;
+}
+
+export interface NFTPortNFT {
+  contract_type: string;
+  contract_address: string;
+  token_id: string;
+  royalties?: NFTPortRoyalty[];
+}
+
+export interface NFTPortPriceDetails {
+  asset_type : "ETH" | "ERC20";
+  contract_address?: string;
+  price: number;
+  price_usd?: number;
+}
+
+export interface NFTPortResult {
+  buyer_address: string;
+  seller_address: string;
+  nft: NFTPortNFT
+  quantity: number;
+  price_details: NFTPortPriceDetails;
+  transaction_hash: string;
+  transaction_date: string;
+  marketplace: string;
+  block_number: number;
+}
+
 export interface EtherscanResult {
+  tokenName: string;
   blockNumber: string;
   timeStamp: string;
   hash: string;

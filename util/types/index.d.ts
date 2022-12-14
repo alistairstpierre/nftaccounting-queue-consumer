@@ -4,6 +4,7 @@ declare global {
   var is_fetching_nft_sales: boolean;
   var is_fetching_nft_purchases: boolean;
   var is_fetching_etherscan_transactions: boolean;
+  var is_fetching_nftport: boolean;
   var alchemy_call_amount: number;
   var walletAddress: string;
   var request_queue: Array;
@@ -11,5 +12,5 @@ declare global {
   var request_date: Date;
   var request_aborted: boolean;
 }
-  
-export {};
+
+export { };

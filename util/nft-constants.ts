@@ -22,6 +22,7 @@ export const tx_type = {
   SWAP: "Swap",
   MISC: "Misc",
   STAKE: "Stake",
+  TRANSFER: "Transfer",
   OPENSEA_EXPENSE: "Opensea Expense",
   OPENSEA_PURCHASE: "Opensea Purchase",
   OPENSEA_BID_PURCHASE: "Opensea Bid Purchase",

@@ -14,6 +14,7 @@ import { get_etherscan_erc721_transactions } from './util/fetching/etherscan/eth
 import { get_etherscan_erc20_transactions } from "./util/fetching/etherscan/etherscan_getERC20Transactions";
 import { trades_parse } from "./util/parsing/trades";
 import { Trade, Transaction } from "./interfaces";
+import { get_nftport } from "./util/fetching/nftport/nftport_getTransactions";
 
 const { promisify } = require("util");
 const RMQConsumer = new Broker().init();
@@ -57,7 +58,8 @@ const handleRequest = async (payload: any, ack: any) => {
       get_etherscan_erc1155_transactions(),
       get_alchemy_asset_transfers(),
       get_alchemy_nft_sales(),
-      get_alchemy_nft_purchases()]);
+      get_alchemy_nft_purchases(),
+      get_nftport()]);
     const parsed_transactions = await parse_transactions(fetched_data);
     let endTime = performance.now();
     console.log("fetching and parsing alchemy and etherscan data took " + (endTime - startTime) + " milliseconds.");
@@ -105,13 +107,17 @@ const handleRequest = async (payload: any, ack: any) => {
       };
     });
 
-    for(const trade of mappedTrades){
-      const trades = mappedTrades.filter((t: Trade) => t.saleUUID != undefined && t.saleUUID === trade.saleUUID);
-      if(trades.length > 1){
-        console.log(trades);
-        break;
-      } 
-    }
+    // mappedTrades.forEach((trade: Trade) => {
+    //   console.log("name:", trade.projectName, "ID", trade.tokenId, "cost:", trade.cost, "sale:", trade.sale, "transaction", trade.SaleTransaction, "feeGas:", trade.feeGas, "feeExchange:", trade.feeExchange, "feeRoyalty:", trade.feeRoyalty);
+    // });
+
+    // for(const trade of mappedTrades){
+    //   const trades = mappedTrades.filter((t: Trade) => t.saleUUID != undefined && t.saleUUID === trade.saleUUID);
+    //   if(trades.length > 1){
+    //     console.log(trades);
+    //     break;
+    //   } 
+    // }
 
     const mapped_expenses = parsed_transactions.other.map((expense: Transaction) => {
       return {
@@ -122,20 +128,20 @@ const handleRequest = async (payload: any, ack: any) => {
         walletAddress: global.walletAddress,
       }
     });
-    startTime = performance.now();
-    if (mappedTrades.length > 0 || mapped_expenses.length > 0) {
-      await updateDB({ mappedTrades, mapped_expenses })
-      endTime = performance.now();
-      console.log(`updating db took ${endTime - startTime} milliseconds`);
-    } else {
-      console.log("no new data");
-    }
-    await prisma.user.update({
-      where: { walletAddress: global.walletAddress },
-      data: {
-        dataStatus: DataStatus.SUCCESS,
-      },
-    });
+    // startTime = performance.now();
+    // if (mappedTrades.length > 0 || mapped_expenses.length > 0) {
+    //   await updateDB({ mappedTrades, mapped_expenses })
+    //   endTime = performance.now();
+    //   console.log(`updating db took ${endTime - startTime} milliseconds`);
+    // } else {
+    //   console.log("no new data");
+    // }
+    // await prisma.user.update({
+    //   where: { walletAddress: global.walletAddress },
+    //   data: {
+    //     dataStatus: DataStatus.SUCCESS,
+    //   },
+    // });
     // ack();
     await disconnectPrisma();
     console.log("data processing complete");
