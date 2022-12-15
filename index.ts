@@ -46,7 +46,7 @@ const handleRequest = async (payload: any, ack: any) => {
     resetGlobals();
     const payloadData = JSON.parse(payload.content.toString());
     global.walletAddress = payloadData.wallet.toLowerCase();
-    deleteAllData();
+    await deleteAllData();
     await checkForDBUser();
     pendingStatus();
     const startDateAndBlock = await findStartDate();
@@ -157,13 +157,6 @@ async function deleteAllData() {
       walletAddress: global.walletAddress,
     },
   });
-  await prisma.note.findMany({
-    where: {
-      walletAddress: global.walletAddress,
-    },
-  }).then((notes: any) => {
-    console.log(notes);
-  })
 }
 
 async function checkForDBUser() {
