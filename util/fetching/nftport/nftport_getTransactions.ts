@@ -43,6 +43,7 @@ const checkForBlockNum = (data: NFTPortResult[]) => {
 export const get_nftport = async () => {
     let next: string | undefined = undefined;
     global.is_fetching_nftport = true;
+    let startTime = performance.now();
     const promise: any = [];
     while (global.is_fetching_nftport) {
         await fetch_1_nftPort(next)
@@ -51,6 +52,7 @@ export const get_nftport = async () => {
                     return null;
                 }
                 next = res.continuation
+                console.log("nftport", next);
                 if (next == (undefined || null)) global.is_fetching_nftport = false;
                 if (global.request_block == 0) {
                     return res.transactions as NFTPortResult[];
@@ -64,6 +66,7 @@ export const get_nftport = async () => {
             .then((data) => promise.push(data));
     }
     const endTime = performance.now();
+    console.log("nftport call time", endTime - startTime);
     return Promise.all(promise);
 };
 

@@ -5,6 +5,8 @@ declare global {
   var is_fetching_nft_purchases: boolean;
   var is_fetching_etherscan_transactions: boolean;
   var is_fetching_nftport: boolean;
+  var is_fetching_mnemonic_sender_data: boolean;
+  var is_fetching_mnemonic_receiver_data: boolean;
   var alchemy_call_amount: number;
   var walletAddress: string;
   var request_queue: Array;

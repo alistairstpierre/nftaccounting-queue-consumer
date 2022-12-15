@@ -3,12 +3,12 @@ import { Trade, Transaction } from "../../interfaces"
 import { getExchangeFee } from "../helpers";
 import { purchase_type, sale_type, tx_type } from "../nft-constants";
 
-const getMarketFee = (marketplace: string|undefined, match: Transaction|undefined) => {
-    if(marketplace == undefined || match == undefined) return 0;
-    if(marketplace.toLowerCase().includes("opensea")) return 0.025 * (match.value? match.value : 0);
-    if(marketplace.toLowerCase().includes("rarible")) return 0.01 * (match.value? match.value : 0);
-    if(marketplace.toLowerCase().includes("looksrare")) return 0.02 * (match.value? match.value : 0);
-    if(marketplace.toLowerCase().includes("x2y2")) return 0.005 * (match.value? match.value : 0);
+const getMarketFee = (marketplace: string | undefined, match: Transaction | undefined) => {
+    if (marketplace == undefined || match == undefined) return 0;
+    if (marketplace.toLowerCase().includes("opensea")) return 0.025 * (match.value ? match.value : 0);
+    if (marketplace.toLowerCase().includes("rarible")) return 0.01 * (match.value ? match.value : 0);
+    if (marketplace.toLowerCase().includes("looksrare")) return 0.02 * (match.value ? match.value : 0);
+    if (marketplace.toLowerCase().includes("x2y2")) return 0.005 * (match.value ? match.value : 0);
     return 0;
 }
 
@@ -27,6 +27,13 @@ export function trades_parse(purchases: Transaction[], sales: Transaction[]) {
             match = potentialMatch[0];
         }
 
+        let projectName = ""
+        if (tx.collection_name != undefined && tx.collection_name != "") {
+            projectName = tx.collection_name;
+        } else if (match != undefined && match.collection_name != undefined && match.collection_name != "") {
+            projectName = match.collection_name;
+        }
+
         const trade: Trade = {
             purchaseUUID: `${tx.tx_hash}-${tx.collection_contract}-${tx.token_id}`,
             saleUUID: match != undefined ? `${match.tx_hash}-${tx.collection_contract}-${tx.token_id}` : undefined,
@@ -37,7 +44,7 @@ export function trades_parse(purchases: Transaction[], sales: Transaction[]) {
             imgUrl: undefined,
             tokenId: tx.token_id,
             projectAddress: tx.collection_contract,
-            projectName: undefined,
+            projectName: projectName,
             purchaseDate: tx.date,
             saleDate: match != undefined ? match.date : undefined,
             purchaseBlock: Number(tx.block),
@@ -45,7 +52,7 @@ export function trades_parse(purchases: Transaction[], sales: Transaction[]) {
             cost: tx.value,
             sale: match != undefined ? match.value : undefined,
             feeGas: match != undefined ? (match.gas != undefined ? match.gas : 0) + (tx.gas != undefined ? tx.gas : 0) : 0,
-            feeExchange: match != undefined ? (match.market_fee != undefined ? match.market_fee : getMarketFee(match.marketplace ,match)) : 0,
+            feeExchange: match != undefined ? (match.market_fee != undefined ? match.market_fee : getMarketFee(match.marketplace, match)) : 0,
             feeRoyalty: match != undefined ? (match.royalty != undefined ? match.royalty : 0) : 0,
             contract: tx.category,
         };
@@ -69,6 +76,13 @@ export function trades_parse(purchases: Transaction[], sales: Transaction[]) {
     }
 
     //console.log(trades)
+    for (const trade of trades) {
+        const match = trades.filter((t: Trade) => t.purchaseUUID == trade.purchaseUUID);
+        if (match.length > 1) {
+            console.log(match);
+        }
+
+    }
 
     const endTime = performance.now();
     console.log(`Parse Trades took ${endTime - startTime} milliseconds`);

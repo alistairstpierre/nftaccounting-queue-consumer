@@ -1,23 +1,28 @@
 import axios from "axios";
 import { NFTPortResult } from '../../../interfaces';
 
-const options = {method: 'GET', headers: {accept: 'application/json', Authorization: `${process.env.MNEMONIC_API_KEY}`}};
+const options = {method: 'GET', headers: { 'X-API-Key': `${process.env.MNEMONIC_API_KEY}`}};
+const offset = 500;
 
 const fetch_1_mnemonic = async (next: string | undefined) => {
     let pageKey = "";
-    if (next != undefined) pageKey = `&continuation=${next}`;
+    if (next != undefined) pageKey = `&offset=${next}`;
 
     const query = new URLSearchParams({
-        limit: 'string',
-        offset: 'string',
+        limit: '500',
+        // offset: '0',
         sortDirection: 'SORT_DIRECTION_ASC',
-        blockTimestampGt: '2019-08-24T14:15:22Z',
-        labelsAny: 'LABEL_MINT',
-        tokenIsSpam: 'SPAM_EXCLUDE',
-        party: 'PARTY_SENDER'
+        // blockTimestampGt: '2019-08-24T14:15:22Z',
+        // contractAddress: 'string',
+        // tokenId: 'string',
+        // transferTypes: 'TRANSFER_TYPE_MINT',
+        // tokenTypes: 'TOKEN_TYPE_ERC721',
+        senderAddress: `${global.walletAddress}`,
+        // recipientAddress: `${global.walletAddress}`,
+        // labelsAny: 'LABEL_MINT'
       }).toString();
 
-    let url = new URL(`https://ethereum.rest.mnemonichq.com/transfers/v1beta1/nft?${query}`);
+    let url = new URL(`https://ethereum.rest.mnemonichq.com/transfers/v1beta1/nft?${query}${pageKey}`);
 
     const startTime = performance.now();
     try {
@@ -25,7 +30,7 @@ const fetch_1_mnemonic = async (next: string | undefined) => {
             .then((data) => {
                 const endTime = performance.now();
                 //console.log(`Fetching nftport transfers took ${endTime - startTime} milliseconds`);
-                return data.data;
+                return data.data.nftTransfers;
             }).catch(function (error) {
                 console.error(error);
                 global.request_aborted = true;
@@ -37,11 +42,11 @@ const fetch_1_mnemonic = async (next: string | undefined) => {
     }
 };
 
-const checkForBlockNum = (data: NFTPortResult[]) => {
-    const blockFiltered: NFTPortResult[] = [];
+const checkForBlockNum = (data: any) => {
+    const blockFiltered: any = [];
     let contains = false;
     for (const nft of data) {
-        if (nft.block_number <= global.request_block) {
+        if (Number(nft.blockchainEvent.blockNumber) <= global.request_block) {
             contains = true;
         } else {
             blockFiltered.push(nft);
@@ -50,22 +55,23 @@ const checkForBlockNum = (data: NFTPortResult[]) => {
     return { contains: contains, data: blockFiltered };
 }
 
-export const get_mnemonic = async () => {
-    let next: string | undefined = undefined;
-    global.is_fetching_nftport = true;
+export const get_mnemonic_sender_data = async () => {
+    let next: number = 0;
+    global.is_fetching_mnemonic_sender_data = true;
+    let startTime = performance.now();
     const promise: any = [];
-    while (global.is_fetching_nftport) {
-        await fetch_1_mnemonic(next)
+    while (global.is_fetching_mnemonic_sender_data) {
+        await fetch_1_mnemonic(next.toString())
             .then((res: any) => {
                 if (global.request_aborted) {
                     return null;
                 }
-                next = res.continuation
-                if (next == (undefined || null)) global.is_fetching_nftport = false;
+                if (res.length < offset) global.is_fetching_mnemonic_sender_data = false;
+                next += offset;
                 if (global.request_block == 0) {
-                    return res.transactions as NFTPortResult[];
+                    return res;
                 }
-                const blockCheck = checkForBlockNum(res.transactions);
+                const blockCheck = checkForBlockNum(res);
                 if (blockCheck.contains) {
                     global.is_fetching_asset_transfers = false;
                 }
@@ -74,6 +80,7 @@ export const get_mnemonic = async () => {
             .then((data) => promise.push(data));
     }
     const endTime = performance.now();
+    console.log(`Fetching mnemonic sender data took ${endTime - startTime} milliseconds`);
     return Promise.all(promise);
 };
 

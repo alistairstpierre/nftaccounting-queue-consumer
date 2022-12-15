@@ -15,6 +15,8 @@ import { get_etherscan_erc20_transactions } from "./util/fetching/etherscan/ethe
 import { trades_parse } from "./util/parsing/trades";
 import { Trade, Transaction } from "./interfaces";
 import { get_nftport } from "./util/fetching/nftport/nftport_getTransactions";
+import { get_mnemonic_sender_data } from './util/fetching/mnemonic/mnemonic_getSenderNFTTransfers';
+import { get_mnemonic_recipient_data } from './util/fetching/mnemonic/mnemonic_getRecipientNFTTransfer';
 
 const { promisify } = require("util");
 const RMQConsumer = new Broker().init();
@@ -44,13 +46,13 @@ const handleRequest = async (payload: any, ack: any) => {
     resetGlobals();
     const payloadData = JSON.parse(payload.content.toString());
     global.walletAddress = payloadData.wallet.toLowerCase();
+    deleteAllData();
     await checkForDBUser();
     pendingStatus();
     const startDateAndBlock = await findStartDate();
     global.request_date = startDateAndBlock.date;
     global.request_block = startDateAndBlock.block;
     console.log(global.walletAddress, global.request_date, global.request_block);
-    let startTime = performance.now();
     const fetched_data = await Promise.all([
       get_etherscan_normal_transactions(),
       get_etherscan_internal_transactions(),
@@ -59,10 +61,10 @@ const handleRequest = async (payload: any, ack: any) => {
       get_alchemy_asset_transfers(),
       get_alchemy_nft_sales(),
       get_alchemy_nft_purchases(),
-      get_nftport()]);
+      get_mnemonic_sender_data(), 
+      get_mnemonic_recipient_data()
+    ]);
     const parsed_transactions = await parse_transactions(fetched_data);
-    let endTime = performance.now();
-    console.log("fetching and parsing alchemy and etherscan data took " + (endTime - startTime) + " milliseconds.");
     if (global.request_aborted) {
       console.log("request aborted");
       failureStatus();
@@ -81,6 +83,7 @@ const handleRequest = async (payload: any, ack: any) => {
       return;
     }
     
+    if(tradesWithUrlsAndCollectionNames == undefined) return;
     const mappedTrades = await tradesWithUrlsAndCollectionNames.map((trade: Trade) => {
       return {
         purchaseUUID: trade.purchaseUUID,
@@ -107,18 +110,6 @@ const handleRequest = async (payload: any, ack: any) => {
       };
     });
 
-    // mappedTrades.forEach((trade: Trade) => {
-    //   console.log("name:", trade.projectName, "ID", trade.tokenId, "cost:", trade.cost, "sale:", trade.sale, "transaction", trade.SaleTransaction, "feeGas:", trade.feeGas, "feeExchange:", trade.feeExchange, "feeRoyalty:", trade.feeRoyalty);
-    // });
-
-    // for(const trade of mappedTrades){
-    //   const trades = mappedTrades.filter((t: Trade) => t.saleUUID != undefined && t.saleUUID === trade.saleUUID);
-    //   if(trades.length > 1){
-    //     console.log(trades);
-    //     break;
-    //   } 
-    // }
-
     const mapped_expenses = parsed_transactions.other.map((expense: Transaction) => {
       return {
         cost: expense.gas,
@@ -128,27 +119,52 @@ const handleRequest = async (payload: any, ack: any) => {
         walletAddress: global.walletAddress,
       }
     });
-    // startTime = performance.now();
-    // if (mappedTrades.length > 0 || mapped_expenses.length > 0) {
-    //   await updateDB({ mappedTrades, mapped_expenses })
-    //   endTime = performance.now();
-    //   console.log(`updating db took ${endTime - startTime} milliseconds`);
-    // } else {
-    //   console.log("no new data");
-    // }
-    // await prisma.user.update({
-    //   where: { walletAddress: global.walletAddress },
-    //   data: {
-    //     dataStatus: DataStatus.SUCCESS,
-    //   },
+
+        // mappedTrades.forEach((trade: Trade) => {
+    //   console.log("name", trade.projectName, "cost", trade.cost, "tx", trade.SaleTransaction, "sale", trade.sale, "royalty", trade.feeRoyalty, "gas", trade.feeGas, "exchange", trade.feeExchange);
     // });
-    // ack();
+
+    let startTime = performance.now();
+    if (mappedTrades.length > 0 || mapped_expenses.length > 0) {
+      await updateDB({ mappedTrades, mapped_expenses })
+      let endTime = performance.now();
+      console.log(`updating db took ${endTime - startTime} milliseconds`);
+    } else {
+      console.log("no new data");
+    }
+    await prisma.user.update({
+      where: { walletAddress: global.walletAddress },
+      data: {
+        dataStatus: DataStatus.SUCCESS,
+      },
+    });
+    ack();
     await disconnectPrisma();
     console.log("data processing complete");
   } catch (error) {
     console.error(error);
   }
 };
+
+async function deleteAllData() {
+  await prisma.eRC721Trade.deleteMany({
+    where: {
+      walletAddress: global.walletAddress,
+    },
+  });
+  await prisma.expense.deleteMany({
+    where: {
+      walletAddress: global.walletAddress,
+    },
+  });
+  await prisma.note.findMany({
+    where: {
+      walletAddress: global.walletAddress,
+    },
+  }).then((notes: any) => {
+    console.log(notes);
+  })
+}
 
 async function checkForDBUser() {
   await prisma.user.findFirst({

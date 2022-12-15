@@ -11,8 +11,6 @@ const fetch_1_alchemy = async (next: string | undefined) => {
     };
 
     const alchemy = new Alchemy(config);
-
-    const startTime = performance.now();
     try {
         const promise = await alchemy.core.getAssetTransfers({
             fromBlock: "0x0",
@@ -22,8 +20,6 @@ const fetch_1_alchemy = async (next: string | undefined) => {
             category: [AssetTransfersCategory.ERC721, AssetTransfersCategory.ERC1155],
             pageKey: pageKey != "" ? pageKey : undefined,
         }).then((data) => {
-            const endTime = performance.now();
-            console.log(`Fetching alchemy asset transfers took ${endTime - startTime} milliseconds`);
             return data;
         }).catch(function (error) {
             console.error(error);
@@ -53,6 +49,7 @@ export const get_alchemy_asset_transfers = async () => {
     global.is_fetching_asset_transfers = true;
     let next: string | undefined = undefined;
     const promise: any = [];
+    let startTime = performance.now();
     while (global.is_fetching_asset_transfers) {
         await fetch_1_alchemy(next)
         .then((res) => {
@@ -61,7 +58,6 @@ export const get_alchemy_asset_transfers = async () => {
             }
             next = (res as AssetTransfersResponse).pageKey
             if(next == (undefined || null)) global.is_fetching_asset_transfers = false;
-            console.log("next", next);
             if (global.request_block == 0) {
                 return (res as AssetTransfersResponse).transfers;
             }
@@ -74,6 +70,7 @@ export const get_alchemy_asset_transfers = async () => {
         .then((data) => promise.push(data));
     }
     const endTime = performance.now();
+    console.log("alchemy call time", endTime - startTime);
     return Promise.all(promise);
 };
 

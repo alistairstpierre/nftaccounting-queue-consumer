@@ -1,14 +1,15 @@
-import { CovalentItem, Transaction, EtherscanResult, NFTPortResult } from '../../interfaces';
+import { CovalentItem, Transaction, EtherscanResult, NFTPortResult, MnemonicNftTransfer } from '../../interfaces';
 import { tx_type } from '../nft-constants';
 import { AssetTransfersCategory, AssetTransfersResult, NftSale, NftSaleMarketplace, NftSaleTakerType } from 'alchemy-sdk';
+import { ethToGwei, ethToWei } from '../helpers';
 
-export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], EtherscanResult[], EtherscanResult[], AssetTransfersResult[], NftSale[], NftSale[], NFTPortResult[]]) {
+export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], EtherscanResult[], EtherscanResult[], AssetTransfersResult[], NftSale[], NftSale[], MnemonicNftTransfer[], MnemonicNftTransfer[]]) {
     const alchemyTransfers: AssetTransfersResult[] = data[4].flat()
     const alchemySales: NftSale[] = data[5]
     const alchemyPurchases: NftSale[] = data[6]
     const etherscanTransactions: EtherscanResult[] = data[0].concat(data[1])
     const etherscanNFTTransactions: EtherscanResult[] = data[2].concat(data[3])
-    const nftPortTransactions: NFTPortResult[] = data[7]
+    const mnemonicNftTransfers: MnemonicNftTransfer[] = data[7].concat(data[8]).flat()
     const transactions = <Transaction[]>[];
     for (const item of data[0]) {
         if (transactions.find((tx) => tx.tx_hash == item.hash) != undefined) continue;
@@ -118,6 +119,7 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
             purchases.push(item);
         }
     }
+
     for (const purchase of alchemyPurchases.flat()) {
         if (purchases.find((p) => p.tx_hash == purchase.transactionHash) != undefined) continue;
         const dataMatch = etherscanNFTTransactions.filter((item) => item.hash == purchase.transactionHash);
@@ -126,6 +128,7 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
         const transfersMatch = alchemyTransfers.find((item) => item.hash == purchase.transactionHash);
         if (new Date(Number(dataMatch[0].timeStamp) * 1000) <= global.request_date && Number(dataMatch[0].blockNumber) <= global.request_block) continue;
         for (const item of dataMatch) {
+            // console.log(purchase, item.gas)
             purchases.push({
                 type: type,
                 tx_hash: purchase.transactionHash,
@@ -137,6 +140,7 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
                 token_id: item.tokenID,
                 market_fee: 0,
                 royalty: 0,
+                collection_name: item.tokenName == '' || item.tokenName == undefined ? undefined : item.tokenName,
                 marketplace: purchase.marketplace,
                 category: transfersMatch?.category,
             });
@@ -145,75 +149,30 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
 
     for (const sale of alchemySales.flat()) {
         if (sales.find((s) => s.tx_hash == sale.transactionHash) != undefined) continue;
-
         const dataMatch = etherscanNFTTransactions.filter((item) => item.hash == sale.transactionHash);
         if (dataMatch.length == 0) continue;
-        const type = getPurchaseType(sale);
+        const type = getSaleType(sale);
         const transfersMatch = alchemyTransfers.find((item) => item.hash == sale.transactionHash);
+        //console.log(mnemonicMatch);
         if (new Date(Number(dataMatch[0].timeStamp) * 1000) <= global.request_date && Number(dataMatch[0].blockNumber) <= global.request_block) continue;
-        for (const item of dataMatch) {
+        for (let i = 0; i < dataMatch.length; i++) {
+            // console.log(sale)
             sales.push({
                 type: type,
                 tx_hash: sale.transactionHash,
                 block: sale.blockNumber.toString(),
                 date: new Date(Number(dataMatch[0].timeStamp) * 1000),
-                gas: sale.taker == NftSaleTakerType.BUYER ? 0 : Number(item.gas) / dataMatch.length,
+                gas: sale.taker == NftSaleTakerType.BUYER ? 0 : Number(dataMatch[i].gas) / dataMatch.length,
                 value: Number(sale.sellerFee.amount) / dataMatch.length,
                 collection_contract: sale.contractAddress,
-                token_id: item.tokenID,
-                market_fee: sale.marketplaceFee ? Number(sale.marketplaceFee?.amount) / dataMatch.length : 0,
+                token_id: dataMatch[i].tokenID,
+                market_fee: sale.marketplaceFee ? Number(sale.marketplaceFee?.amount) / dataMatch.length : undefined,
                 royalty: sale.royaltyFee ? Number(sale.royaltyFee?.amount) / dataMatch.length : 0,
                 marketplace: sale.marketplace,
                 category: transfersMatch?.category,
                 uuid: transfersMatch?.uniqueId,
+                collection_name:  dataMatch[i].tokenName == '' || dataMatch[i].tokenName == undefined ? undefined : dataMatch[i].tokenName,
             });
-        }
-    }
-
-    for (const item of nftPortTransactions.flat()) {
-        if (item.buyer_address.toLowerCase() == global.walletAddress.toLowerCase()) {
-            if (purchases.find((purchases) => purchases.tx_hash == item.transaction_hash) != undefined) continue;
-            const nftMatch = nftPortTransactions.flat().filter((tx) => tx.transaction_hash == item.transaction_hash);
-            const etherscanMatch = etherscanTransactions.find((tx) => item.transaction_hash == tx.hash);
-            if (nftMatch.length == 0) continue;
-            for (const nft of nftMatch) {
-                const type = getNFTPortPurchaseType(nft);
-                purchases.push({
-                    type: type,
-                    tx_hash: item.transaction_hash,
-                    block: item.block_number.toString(),
-                    date: new Date(item.transaction_date),
-                    gas: etherscanMatch?.gasPrice ? (Number(etherscanMatch?.gasUsed) * Number(etherscanMatch?.gasPrice) / nftMatch.length) : 0,
-                    value: Number(etherscanMatch?.value) / nftMatch.length,
-                    collection_contract: item.nft.contract_address,
-                    token_id: nft.nft.token_id,
-                    category: item.nft.contract_type.toLowerCase() as AssetTransfersCategory,
-                    royalty: 0,
-                    marketplace: nft.marketplace,
-                });
-            }
-        }
-        else if (item.seller_address.toLowerCase() == global.walletAddress.toLowerCase()) {
-            if (sales.find((sales) => sales.tx_hash == item.transaction_hash) != undefined) continue;
-            const nftMatch = nftPortTransactions.flat().filter((tx) => tx.transaction_hash == item.transaction_hash);
-            const etherscanMatch = etherscanTransactions.find((tx) => item.transaction_hash == tx.hash);
-            if (nftMatch.length == 0) continue;
-            for (const nft of nftMatch) {
-                const type = getNFTPortSaleType(nft);
-                sales.push({
-                    type: type,
-                    tx_hash: item.transaction_hash,
-                    block: item.block_number.toString(),
-                    date: new Date(item.transaction_date),
-                    gas: 0,
-                    value: Number(etherscanMatch?.value) / nftMatch.length,
-                    collection_contract: item.nft.contract_address,
-                    token_id: nft.nft.token_id,
-                    category: item.nft.contract_type.toLowerCase() as AssetTransfersCategory,
-                    royalty: item.nft.royalties ? (Number(item.nft.royalties[0].royalty_share) / 100000) * (Number(etherscanMatch?.value) / nftMatch.length) : 0,
-                    marketplace: nft.marketplace,
-                });
-            }
         }
     }
 
@@ -224,39 +183,19 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
         }
     };
 
-    for (const item of etherscanNFTTransactions.flat()) {
-        if (purchases.find((purchases) => purchases.tx_hash == item.hash) != undefined) continue;
-        if (sales.find((sales) => sales.tx_hash == item.hash) != undefined) continue;
-        if (other.find((other) => other.tx_hash == item.hash) != undefined) continue;
-        if (item.to.toLowerCase() != global.walletAddress.toLowerCase()) continue;
-        if (item.tokenName == '') continue;
-        const dataMatch = etherscanNFTTransactions.flat().filter((tx) => tx.hash == item.hash);
-        if (dataMatch.length == 0) continue;
-        for (const data of dataMatch) {
-            purchases.push({
-                type: tx_type.TRANSFER,
-                tx_hash: data.hash,
-                block: data.blockNumber.toString(),
-                date: new Date(Number(data.timeStamp) * 1000),
-                gas: 0,
-                value: 0,
-                collection_contract: data.contractAddress,
-                token_id: data.tokenID,
-                category: AssetTransfersCategory.INTERNAL,
-                royalty: 0,
-            })
-        }
-    }
-
     for (const item of etherscanNFTTransactions) {
         if (item.from.toLowerCase() == global.walletAddress.toLowerCase()) {
             // sale
             if (sales.find((s) => s.tx_hash == item.hash) != undefined) continue;
             if (item.to == '0x0000000000000000000000000000000000000000') continue; // burn
             const normalEtherscanMatch = etherscanTransactions.find((tx) => item.hash == tx.hash);
+            const mnemonicNftTransfer = mnemonicNftTransfers.find((tx) => item.hash == tx.blockchainEvent.txHash);
+            let mnemonicMarketAndRoyalty = undefined
+            if(mnemonicNftTransfer != undefined){
+                mnemonicMarketAndRoyalty = getMnemonicRoyaltyAndMarketFee(mnemonicNftTransfer);
+            }
             const dataMatch = etherscanNFTTransactions.filter((tx) => tx.hash == item.hash);
             if (dataMatch.length == 0) continue;
-            if (item.hash.toLowerCase() == ('0x23db65bfc9f02f004029ac7d4ea7a1ed1606943403d98ffd8bf8988bf3ec5fe6'.toLowerCase())) console.log(item, normalEtherscanMatch)
             for (const data of dataMatch) {
                 sales.push({
                     type: tx_type.UNKNOWN_SALE,
@@ -264,16 +203,22 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
                     block: item.blockNumber.toString(),
                     date: new Date(Number(item.timeStamp) * 1000),
                     gas: 0,
-                    value: Number(normalEtherscanMatch?.value) / dataMatch.length,
+                    value: mnemonicNftTransfer != undefined ? Math.round(ethToWei(Number(mnemonicNftTransfer.recipientPaid.totalEth))) 
+                    : Number(normalEtherscanMatch?.value) > 0 ? Number(normalEtherscanMatch?.value) / dataMatch.length : 0,
                     collection_contract: data.contractAddress,
                     token_id: data.tokenID,
+                    collection_name: data.tokenName == '' || data.tokenName == undefined ? undefined : data.tokenName,
                     category: AssetTransfersCategory.INTERNAL,
+                    royalty: mnemonicMarketAndRoyalty != undefined ? Math.round(mnemonicMarketAndRoyalty.royalty / dataMatch.length) : 0,
+                    market_fee: mnemonicMarketAndRoyalty != undefined ? Math.round(mnemonicMarketAndRoyalty.marketFee / dataMatch.length) : undefined,
                 });
             }
         } else if (item.to.toLowerCase() == global.walletAddress.toLowerCase()) {
             // to
             if (purchases.find((p) => p.tx_hash == item.hash) != undefined) continue;
+            if (item.tokenName == '') continue;
             const normalEtherscanMatch = etherscanTransactions.find((tx) => item.hash == tx.hash);
+            if(normalEtherscanMatch?.functionName.includes('move')) continue;
             const dataMatch = etherscanNFTTransactions.filter((tx) => tx.hash == item.hash);
             if (dataMatch.length == 0) continue;
             for (const data of dataMatch) {
@@ -283,25 +228,36 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
                     block: item.blockNumber.toString(),
                     date: new Date(Number(item.timeStamp) * 1000),
                     gas: normalEtherscanMatch?.gasPrice ? (Number(normalEtherscanMatch?.gasUsed) * Number(normalEtherscanMatch?.gasPrice) / dataMatch.length) : 0,
-                    value: Number(normalEtherscanMatch?.value) / dataMatch.length,
+                    value: Number(normalEtherscanMatch?.value) > 0 ? Number(normalEtherscanMatch?.value) / dataMatch.length : 0,
                     collection_contract: data.contractAddress,
                     token_id: data.tokenID,
+                    collection_name: data.tokenName == '' || data.tokenName == undefined ? undefined : data.tokenName,
                     category: AssetTransfersCategory.INTERNAL,
                 });
             }
         }
     }
-    // let testMatch = etherscanNFTTransactions.filter((item) => item.contractAddress == ("0xF1536ab2Dd1Fc1Da5D77fec3ce29537f6ef0634b".toLowerCase()));
+
+    // const p = purchases.find((p) => p.tx_hash == "0xc61757a3675ef08091dcc1ff9744b9893504938b481842d49fe4636f95c41462")
+    // if(p != undefined) console.log(p)
+
+    // console.log("after etherscanNFT", purchases.length, sales.length)
+
+    // for (const item of mnemonicNFTPurchases) {
+    //     console.log("hi")
+    // }
+    // let testMatch:any = etherscanNFTTransactions.filter((item) => item.hash.toLowerCase() == ("0x23db65bfc9f02f004029ac7d4ea7a1ed1606943403d98ffd8bf8988bf3ec5fe6".toLowerCase()));
     // if(testMatch.length > 0) console.log("etherscannft test", testMatch);
 
-    // let testMatch:any = etherscanTransactions.filter((item) => item.hash.toLowerCase() == ("0x0e3f6720073dff28c5200ea63390f5cd9a3ef7c7b3735523ead4f02f9ad8227a".toLowerCase()));
+    // testMatch = etherscanTransactions.filter((item) => item.hash.toLowerCase() == ("0x23db65bfc9f02f004029ac7d4ea7a1ed1606943403d98ffd8bf8988bf3ec5fe6".toLowerCase()));
     // if(testMatch.length > 0) console.log("etherscan test", testMatch);
 
-    // let testMatch = nftPortTransactions.filter((item) => item.nft != undefined ? item.nft.contract_address.toLowerCase() : "" == ("0x23db65bfc9f02f004029ac7d4ea7a1ed1606943403d98ffd8bf8988bf3ec5fe6".toLowerCase()));
+    // testMatch = nftPortTransactions.filter((item) => item.transaction_hash == ("0x23db65bfc9f02f004029ac7d4ea7a1ed1606943403d98ffd8bf8988bf3ec5fe6".toLowerCase()));
     // if(testMatch.length > 0) console.log("nftport test", testMatch);
 
-    // let testMatch = alchemyTransfers.filter((item) => item.rawContract.address?.toLowerCase() == ("0x0e3f6720073dff28c5200ea63390f5cd9a3ef7c7b3735523ead4f02f9ad8227a".toLowerCase()));
+    // testMatch = alchemyPurchases.flat().filter((item) => item.transactionHash == ("0x23db65bfc9f02f004029ac7d4ea7a1ed1606943403d98ffd8bf8988bf3ec5fe6".toLowerCase()));
     // if(testMatch.length > 0) console.log("etherscannft test", testMatch);
+
 
     return { purchases, sales, other };
 }
@@ -357,3 +313,33 @@ const getPurchaseType = (purchase: NftSale) => {
             return purchase.taker == NftSaleTakerType.BUYER ? tx_type.UNKNOWN_PURCHASE : tx_type.UNKNOWN_BID_PURCHASE;
     }
 }
+
+const MarketPlaceLabels = {
+    OPENSEA: 'LABEL_MARKETPLACE_OPENSEA',
+    LOOKSRARE: 'LABEL_MARKETPLACE_LOOKSRARE',
+    X2Y2: 'LABEL_MARKETPLACE_X2Y2',
+    RARIBLE: 'LABEL_MARKETPLACE_RARIBLE',
+    SUPERRARE: 'LABEL_MARKETPLACE_SUPERRARE',
+    CRYPTOPUNKS: 'LABEL_MARKETPLACE_CRYPTOPUNKS',
+    ARTBLOCKS: 'LABEL_MARKETPLACE_ARTBLOCKS',
+}
+
+function getMnemonicRoyaltyAndMarketFee(arg0: MnemonicNftTransfer) {
+    const price = Number(arg0.recipientPaid.totalEth);
+    const recieved = Number(arg0.senderReceived.totalEth);
+    let marketFee = 0;
+    if(arg0.labels.includes(MarketPlaceLabels.OPENSEA)) {
+        marketFee = price * 0.025;
+    } else if(arg0.labels.includes(MarketPlaceLabels.LOOKSRARE)) {
+        marketFee = price * 0.02;
+    } else if(arg0.labels.includes(MarketPlaceLabels.X2Y2)) {
+        marketFee = price * 0.005;
+    } else if(arg0.labels.includes(MarketPlaceLabels.RARIBLE)) {
+        marketFee = price * 0.01;
+    }
+    const royalty = ethToWei(price - recieved - marketFee);
+    marketFee = ethToWei(marketFee);
+    return { royalty, marketFee };
+}
+
+

@@ -43,12 +43,10 @@ model ERC721Trade {
   feeGas              Float     @db.Real
   feeExchange         Float     @db.Real
   feeRoyalty          Float?    @db.Real
-  Note                Note?
 }
 
 model Note {
   uuid          String      @id @unique @db.VarChar(255)
-  trade         ERC721Trade @relation(fields: [uuid], references: [purchaseUUID])
   user          User        @relation(fields: [walletAddress], references: [walletAddress])
   walletAddress String
   contents      String      @db.VarChar(2000)

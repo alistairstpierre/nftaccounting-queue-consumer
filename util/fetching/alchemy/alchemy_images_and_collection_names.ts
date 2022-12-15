@@ -19,7 +19,10 @@ export const get_alchemy_imageurls_and_collectionnames = async (trades: Trade[])
     })
     .catch((err) => {
       console.log(err);
+      global.request_aborted = true;
     });
+
+  if(global.request_aborted) return;
 
   // find the image url for each nft and add it to the trade
   // check to see if it has an editable url or not, if not just use the collection url for now.
@@ -28,7 +31,7 @@ export const get_alchemy_imageurls_and_collectionnames = async (trades: Trade[])
     if (element.projectAddress && element.tokenId) {
       const nft = data.find((x: any) => x.contract.address == element.projectAddress && x.id.tokenId == element.tokenId);
       if (nft) {
-        element.projectName = nft.contractMetadata.name;
+        element.projectName = element.projectName == undefined || element.projectName == "" ? nft.contractMetadata.name : element.projectName;
         if (nft.media[0].gateway.includes("alchemyapi")) {
           element.imgUrl = editAlchemyUrl(nft.media[0].gateway, 40);
         } else if(nft.contractMetadata.openSea.imageUrl != undefined){
@@ -92,8 +95,8 @@ const sleep = (seconds: number) => new Promise((resolve) => setTimeout(resolve, 
 
 export const alchemy_call_amount_check = async () => {
   if (globalThis.alchemy_call_amount >= 5) {
-    console.log("alchemy calls at 5 sleeping for 1.5 seconds");
-    await sleep(1.5);
+    console.log("alchemy calls at 5 sleeping for 1.1 seconds");
+    await sleep(1.1);
     console.log("sleep finished");
     globalThis.alchemy_call_amount = 0;
   } else {

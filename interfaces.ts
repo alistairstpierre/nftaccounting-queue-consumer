@@ -205,3 +205,63 @@ export interface MarketplaceDetails {
   exchangeContracts: any;
   sellerFee?: number;
 }
+
+export interface BlockchainEvent {
+  txHash: string;
+  logIndex: string;
+  seqIndex: string;
+  blockNumber: string;
+  blockTimestamp: Date;
+}
+
+export interface Sender {
+  address: string;
+  type: string;
+}
+
+export interface Erc20Totals {
+  contractAddress: string;
+  totalNormalized: string;
+}
+
+export interface SenderReceived {
+  totalEth: string;
+  totalUsd: string;
+  ethTransfersTotal: string;
+  erc20TransfersTotal: string;
+  attributedBy: string;
+  erc20Totals: Erc20Totals[];
+}
+
+export interface Recipient {
+  address: string;
+  type: string;
+}
+
+export interface Erc20Totals2 {
+  contractAddress: string;
+  totalNormalized: string;
+}
+
+export interface RecipientPaid {
+  totalEth: string;
+  totalUsd: string;
+  ethTransfersTotal: string;
+  erc20TransfersTotal: string;
+  attributedBy: string;
+  erc20Totals: Erc20Totals2[];
+}
+
+export interface MnemonicNftTransfer {
+  blockchainEvent: BlockchainEvent;
+  contractAddress: string;
+  tokenId: string;
+  tokenType: string;
+  transferType: string;
+  quantity: string;
+  sender: Sender;
+  senderReceived: SenderReceived;
+  recipient: Recipient;
+  recipientPaid: RecipientPaid;
+  labels: string[];
+}

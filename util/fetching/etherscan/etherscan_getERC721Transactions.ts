@@ -14,6 +14,19 @@ export const get_etherscan_erc721_transactions = async () => {
     return fetch_1() as Promise<EtherscanResult[]>;
 };
 
+const checkForBlockNum = (data: EtherscanResult[]) => {
+    const blockFiltered: EtherscanResult[] = [];
+    let contains = false;
+    for (const nft of data) {
+        if (Number(nft.blockNumber) <= global.request_block) {
+            contains = true;
+        } else {
+            blockFiltered.push(nft);
+        }
+    }
+    return { contains: contains, data: blockFiltered };
+}
+
 const fetch_1 = async () => {
     const url = new URL(`https://api.etherscan.io/api`);
     const tempParams: any = params;
@@ -25,11 +38,12 @@ const fetch_1 = async () => {
         .then((res) => res.data)
         .then((data) => {
             const end = performance.now();
-            console.log(`Fetching etherscan took ${end - start} milliseconds`);
-            // if (data.result.length < params.offset) {
-            //     global.is_fetching_etherscan_transactions = false;
-            // }
-            return data.result;
+            console.log(`Fetching etherscan 721 took ${end - start} milliseconds`);
+            if (global.request_block == 0) {
+                return data.result;
+            }
+            const blockCheck = checkForBlockNum(data.result);
+            return blockCheck.data;
         })
         .catch((error) => {
             console.log("error", error.code)

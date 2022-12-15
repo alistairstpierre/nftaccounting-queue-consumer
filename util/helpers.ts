@@ -33,7 +33,20 @@ export function gweiToEth(gweiAmount: number | undefined): number {
   return gweiAmount * gweiInEth;
 }
 
+// function to convert eth to gwei
+export function ethToGwei(ethAmount: number | undefined): number {
+  if (ethAmount === undefined) return 0;
+  return ethAmount / gweiInEth;
+}
+
 const weiInEth: number = Math.pow(10, -18);
+
+// function to convert eth to wei
+export function ethToWei(ethAmount: number | undefined): number {
+  if (ethAmount === undefined) return 0;
+  return ethAmount / weiInEth;
+}
+
 export function weiToEth(weiAmount: number | undefined): number {
   if (weiAmount === undefined) return 0;
   return weiAmount * weiInEth;

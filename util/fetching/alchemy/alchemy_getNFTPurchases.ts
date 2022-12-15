@@ -59,7 +59,6 @@ export const get_alchemy_nft_purchases = async () => {
             }
             next = (res as GetNftSalesResponse).pageKey
             if(next == (undefined || null)) global.is_fetching_nft_purchases = false;
-            console.log("next", next);
             if (global.request_block == 0) {
                 return (res as GetNftSalesResponse).nftSales;
             }
