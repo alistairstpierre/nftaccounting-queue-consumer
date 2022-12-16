@@ -46,7 +46,7 @@ const handleRequest = async (payload: any, ack: any) => {
     resetGlobals();
     const payloadData = JSON.parse(payload.content.toString());
     global.walletAddress = payloadData.wallet.toLowerCase();
-    await deleteAllData();
+    // await deleteAllData();
     await checkForDBUser();
     pendingStatus();
     const startDateAndBlock = await findStartDate();

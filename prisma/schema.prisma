@@ -46,10 +46,10 @@ model ERC721Trade {
 }
 
 model Note {
-  uuid          String      @id @unique @db.VarChar(255)
-  user          User        @relation(fields: [walletAddress], references: [walletAddress])
+  uuid          String @id @unique @db.VarChar(255)
+  user          User   @relation(fields: [walletAddress], references: [walletAddress])
   walletAddress String
-  contents      String      @db.VarChar(2000)
+  contents      String @db.VarChar(2000)
 }
 
 enum DataStatus {
@@ -64,6 +64,8 @@ model User {
   tradesUpdatedAt   DateTime?
   dataStatus        DataStatus    @default(NONE)
   hiddenCollections String[]
+  secondaryWallets  String[]
+  hiddenWallets     String[]
   trades            ERC721Trade[]
   notes             Note[]
   expenses          Expense[]
