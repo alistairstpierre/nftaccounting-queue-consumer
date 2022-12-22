@@ -23,6 +23,8 @@ const RMQConsumer = new Broker().init();
 const pipeline = promisify(require("stream").pipeline);
 const prisma = new PrismaClient();
 
+// deleteAllData();
+
 const resetGlobals = () => {
   global.is_fetching_asset_transfers = false;
   global.is_fetching_nft_sales = false;
@@ -46,7 +48,6 @@ const handleRequest = async (payload: any, ack: any) => {
     resetGlobals();
     const payloadData = JSON.parse(payload.content.toString());
     global.walletAddress = payloadData.wallet.toLowerCase();
-    // await deleteAllData();
     await checkForDBUser();
     pendingStatus();
     const startDateAndBlock = await findStartDate();

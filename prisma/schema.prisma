@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,21 +11,20 @@ model Expense {
   id            Int      @id @default(autoincrement())
   cost          Float    @db.Real
   date          DateTime
-  blockNumber   Int      @db.Integer
+  blockNumber   Int
   type          String   @db.VarChar(100)
-  user          User     @relation(fields: [walletAddress], references: [walletAddress])
   walletAddress String   @db.VarChar(100)
+  user          User     @relation(fields: [walletAddress], references: [walletAddress])
 }
 
 model ERC721Trade {
   purchaseUUID        String    @id @unique @db.VarChar(255)
   saleUUID            String?   @unique @db.VarChar(255)
   walletAddress       String    @db.VarChar(100)
-  user                User      @relation(fields: [walletAddress], references: [walletAddress])
   purchaseDate        DateTime
   saleDate            DateTime?
-  purchaseBlock       Int       @db.Integer
-  saleBlock           Int?      @db.Integer
+  purchaseBlock       Int
+  saleBlock           Int?
   purchaseType        String    @db.VarChar(100)
   purchaseTransaction String    @db.VarChar(100)
   saleType            String?   @db.VarChar(100)
@@ -43,20 +39,14 @@ model ERC721Trade {
   feeGas              Float     @db.Real
   feeExchange         Float     @db.Real
   feeRoyalty          Float?    @db.Real
+  user                User      @relation(fields: [walletAddress], references: [walletAddress])
 }
 
 model Note {
   uuid          String @id @unique @db.VarChar(255)
-  user          User   @relation(fields: [walletAddress], references: [walletAddress])
   walletAddress String
   contents      String @db.VarChar(2000)
-}
-
-enum DataStatus {
-  NONE
-  SUCCESS
-  PENDING
-  FAILURE
+  user          User   @relation(fields: [walletAddress], references: [walletAddress])
 }
 
 model User {
@@ -67,6 +57,13 @@ model User {
   secondaryWallets  String[]
   hiddenWallets     String[]
   trades            ERC721Trade[]
-  notes             Note[]
   expenses          Expense[]
+  notes             Note[]
+}
+
+enum DataStatus {
+  NONE
+  SUCCESS
+  PENDING
+  FAILURE
 }
