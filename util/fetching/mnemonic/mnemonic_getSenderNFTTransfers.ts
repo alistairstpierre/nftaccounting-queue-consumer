@@ -3,33 +3,47 @@ import { NFTPortResult } from '../../../interfaces';
 
 const options = {method: 'GET', headers: { 'X-API-Key': `${process.env.MNEMONIC_API_KEY}`}};
 const offset = 500;
+const fetch_amount = 15;
 
 const fetch_1_mnemonic = async (next: string | undefined) => {
-    let pageKey = "";
-    if (next != undefined) pageKey = `&offset=${next}`;
+    let pageOffset = "";
+    if (next != undefined) pageOffset = `&offset=${next}`;
 
-    const query = new URLSearchParams({
+    const tokenTypes = `&tokenTypes=TOKEN_TYPE_ERC721&tokenTypes=TOKEN_TYPE_ERC1155`;
+
+    let query = new URLSearchParams({
         limit: '500',
         // offset: '0',
         sortDirection: 'SORT_DIRECTION_ASC',
         // blockTimestampGt: '2019-08-24T14:15:22Z',
         // contractAddress: 'string',
         // tokenId: 'string',
-        // transferTypes: 'TRANSFER_TYPE_MINT',
-        // tokenTypes: 'TOKEN_TYPE_ERC721',
+        transferTypes: 'TRANSFER_TYPE_REGULAR',
         senderAddress: `${global.walletAddress}`,
         // recipientAddress: `${global.walletAddress}`,
         // labelsAny: 'LABEL_MINT'
       }).toString();
 
-    let url = new URL(`https://ethereum.rest.mnemonichq.com/transfers/v1beta1/nft?${query}${pageKey}`);
+    let url = new URL(`https://ethereum.rest.mnemonichq.com/transfers/v1beta1/nft?${query}${pageOffset}${tokenTypes}`);
 
     const startTime = performance.now();
+    //console.log(`start mnemonic sender data fetch for pages: ${next}-${Number(next)+offset}`);
     try {
         const promise = await axios.get(url.toString(), options)
             .then((data) => {
+                if (global.request_aborted) {
+                    return null;
+                }
+                if (data.data.nftTransfers.length < offset) global.is_fetching_mnemonic_sender_data = false;
                 const endTime = performance.now();
-                //console.log(`Fetching nftport transfers took ${endTime - startTime} milliseconds`);
+                //console.log(`Fetching mnemonic sender data ${next}-${Number(next)+offset} took ${endTime - startTime} milliseconds`);
+                if (global.request_block == 0) {
+                    return data.data.nftTransfers;
+                }
+                const blockCheck = checkForBlockNum(data.data.nftTransfers);
+                if (blockCheck.contains) {
+                    global.is_fetching_mnemonic_sender_data = false;
+                }
                 return data.data.nftTransfers;
             }).catch(function (error) {
                 console.error(error);
@@ -55,29 +69,25 @@ const checkForBlockNum = (data: any) => {
     return { contains: contains, data: blockFiltered };
 }
 
+const fetch_multi = async (start: number) => {
+    const promise = [];
+    for(let i = start; i < start + fetch_amount; i++) {
+        promise.push(fetch_1_mnemonic((i*offset).toString()));
+    }
+    return Promise.all(promise);
+}
+
+const sleep = (seconds: number) => new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+
 export const get_mnemonic_sender_data = async () => {
     let next: number = 0;
     global.is_fetching_mnemonic_sender_data = true;
-    let startTime = performance.now();
+    const startTime = performance.now();
     const promise: any = [];
     while (global.is_fetching_mnemonic_sender_data) {
-        await fetch_1_mnemonic(next.toString())
-            .then((res: any) => {
-                if (global.request_aborted) {
-                    return null;
-                }
-                if (res.length < offset) global.is_fetching_mnemonic_sender_data = false;
-                next += offset;
-                if (global.request_block == 0) {
-                    return res;
-                }
-                const blockCheck = checkForBlockNum(res);
-                if (blockCheck.contains) {
-                    global.is_fetching_asset_transfers = false;
-                }
-                return blockCheck.data;
-            })
-            .then((data) => promise.push(data));
+        promise.push(fetch_multi(next));
+        await sleep(1);
+        next += fetch_amount;
     }
     const endTime = performance.now();
     console.log(`Fetching mnemonic sender data took ${endTime - startTime} milliseconds`);

@@ -23,8 +23,6 @@ const RMQConsumer = new Broker().init();
 const pipeline = promisify(require("stream").pipeline);
 const prisma = new PrismaClient();
 
-// deleteAllData();
-
 const resetGlobals = () => {
   global.is_fetching_asset_transfers = false;
   global.is_fetching_nft_sales = false;
@@ -65,7 +63,9 @@ const handleRequest = async (payload: any, ack: any) => {
       get_mnemonic_sender_data(), 
       get_mnemonic_recipient_data()
     ]);
+
     const parsed_transactions = await parse_transactions(fetched_data);
+
     if (global.request_aborted) {
       console.log("request aborted");
       failureStatus();
@@ -120,10 +120,6 @@ const handleRequest = async (payload: any, ack: any) => {
         walletAddress: global.walletAddress,
       }
     });
-
-        // mappedTrades.forEach((trade: Trade) => {
-    //   console.log("name", trade.projectName, "cost", trade.cost, "tx", trade.SaleTransaction, "sale", trade.sale, "royalty", trade.feeRoyalty, "gas", trade.feeGas, "exchange", trade.feeExchange);
-    // });
 
     let startTime = performance.now();
     if (mappedTrades.length > 0 || mapped_expenses.length > 0) {

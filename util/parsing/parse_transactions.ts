@@ -4,12 +4,12 @@ import { AssetTransfersCategory, AssetTransfersResult, NftSale, NftSaleMarketpla
 import { ethToGwei, ethToWei } from '../helpers';
 
 export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], EtherscanResult[], EtherscanResult[], AssetTransfersResult[], NftSale[], NftSale[], MnemonicNftTransfer[], MnemonicNftTransfer[]]) {
-    const alchemyTransfers: AssetTransfersResult[] = data[4].flat()
-    const alchemySales: NftSale[] = data[5]
-    const alchemyPurchases: NftSale[] = data[6]
-    const etherscanTransactions: EtherscanResult[] = data[0].concat(data[1])
-    const etherscanNFTTransactions: EtherscanResult[] = data[2].concat(data[3])
-    const mnemonicNftTransfers: MnemonicNftTransfer[] = data[7].concat(data[8]).flat()
+    const alchemyTransfers: AssetTransfersResult[] = data[4].flat(2)
+    const alchemySales: NftSale[] = data[5].flat(2)
+    const alchemyPurchases: NftSale[] = data[6].flat(2)
+    const etherscanTransactions: EtherscanResult[] = data[0].concat(data[1]).flat(2)
+    const etherscanNFTTransactions: EtherscanResult[] = data[2].concat(data[3]).flat(2)
+    const mnemonicNftTransfers: MnemonicNftTransfer[] = data[7].concat(data[8]).flat(2)
     const transactions = <Transaction[]>[];
     for (const item of data[0]) {
         if (transactions.find((tx) => tx.tx_hash == item.hash) != undefined) continue;
@@ -120,7 +120,7 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
         }
     }
 
-    for (const purchase of alchemyPurchases.flat()) {
+    for (const purchase of alchemyPurchases) {
         if (purchases.find((p) => p.tx_hash == purchase.transactionHash) != undefined) continue;
         const dataMatch = etherscanNFTTransactions.filter((item) => item.hash == purchase.transactionHash);
         if (dataMatch.length == 0) continue;
@@ -147,7 +147,7 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
         }
     }
 
-    for (const sale of alchemySales.flat()) {
+    for (const sale of alchemySales) {
         if (sales.find((s) => s.tx_hash == sale.transactionHash) != undefined) continue;
         const dataMatch = etherscanNFTTransactions.filter((item) => item.hash == sale.transactionHash);
         if (dataMatch.length == 0) continue;
@@ -243,8 +243,8 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
 
     // console.log("after etherscanNFT", purchases.length, sales.length)
 
-    // for (const item of mnemonicNFTPurchases) {
-    //     console.log("hi")
+    // for (const item of mnemonicNftTransfers) {
+    //     console.log(item)
     // }
     // let testMatch:any = etherscanNFTTransactions.filter((item) => item.hash.toLowerCase() == ("0x23db65bfc9f02f004029ac7d4ea7a1ed1606943403d98ffd8bf8988bf3ec5fe6".toLowerCase()));
     // if(testMatch.length > 0) console.log("etherscannft test", testMatch);
