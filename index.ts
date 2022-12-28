@@ -40,7 +40,7 @@ const resetGlobals = () => {
  * @param {Function} ack - callback function
  */
 
-deleteAllData();
+// deleteAllData();
 
 const handleRequest = async (payload: any, ack: any) => {
   try {
@@ -88,7 +88,9 @@ const handleRequest = async (payload: any, ack: any) => {
 
     if (tradesWithUrlsAndCollectionNames == undefined) return;
     const filteredTrades = tradesWithUrlsAndCollectionNames.filter((trade: Trade) => {
-      return trade.imgUrl !== undefined && trade.projectName !== undefined && trade.imgUrl.length < 510 && trade.projectName.length < 255 && trade.purchaseUUID.length < 255;
+      if(trade.projectName == undefined || trade.projectName.length >= 255) trade.projectName = trade.projectAddress;
+      if(trade.imgUrl == undefined || trade.imgUrl.length > 510) trade.imgUrl = "/Rhombus.gif";
+      return trade.purchaseUUID.length < 255;
     });
 
     const mappedTrades = filteredTrades.map((trade: Trade, index: Number) => {
