@@ -40,6 +40,8 @@ const resetGlobals = () => {
  * @param {Function} ack - callback function
  */
 
+// deleteAllData();
+
 const handleRequest = async (payload: any, ack: any) => {
   try {
     console.log("start data processing");
@@ -60,7 +62,7 @@ const handleRequest = async (payload: any, ack: any) => {
       get_alchemy_asset_transfers(),
       get_alchemy_nft_sales(),
       get_alchemy_nft_purchases(),
-      get_mnemonic_sender_data(), 
+      get_mnemonic_sender_data(),
       get_mnemonic_recipient_data()
     ]);
 
@@ -83,9 +85,13 @@ const handleRequest = async (payload: any, ack: any) => {
       await disconnectPrisma();
       return;
     }
-    
-    if(tradesWithUrlsAndCollectionNames == undefined) return;
-    const mappedTrades = await tradesWithUrlsAndCollectionNames.map((trade: Trade) => {
+
+    if (tradesWithUrlsAndCollectionNames == undefined) return;
+    const filteredTrades = tradesWithUrlsAndCollectionNames.filter((trade: Trade) => {
+      return trade.imgUrl !== undefined && trade.projectName !== undefined && trade.imgUrl.length < 510 && trade.projectName.length < 255 && trade.purchaseUUID.length < 255;
+    });
+
+    const mappedTrades = filteredTrades.map((trade: Trade, index: Number) => {
       return {
         purchaseUUID: trade.purchaseUUID,
         saleUUID: trade.saleUUID,
@@ -213,7 +219,7 @@ async function findStartDate() {
       where: { walletAddress: global.walletAddress },
     });
     if (user == null) {
-      return {date: lastTrade, block: lastBlock};
+      return { date: lastTrade, block: lastBlock };
     }
     const purchaseDates = await prisma.eRC721Trade.findFirst({
       where: { walletAddress: global.walletAddress },
@@ -227,22 +233,22 @@ async function findStartDate() {
       where: { walletAddress: global.walletAddress },
       orderBy: { date: "desc" },
     });
-    if (purchaseDates != null){
+    if (purchaseDates != null) {
       lastBlock = lastTrade > purchaseDates.purchaseDate ? lastBlock : purchaseDates.purchaseBlock;
       lastTrade = lastTrade > purchaseDates.purchaseDate ? lastTrade : purchaseDates.purchaseDate;
     }
-    if (saleDates != null && saleDates.saleDate != null && saleDates.saleBlock != null){
+    if (saleDates != null && saleDates.saleDate != null && saleDates.saleBlock != null) {
       lastBlock = lastTrade > saleDates.purchaseDate ? lastBlock : saleDates.saleBlock;
       lastTrade = lastTrade > saleDates.saleDate ? lastTrade : saleDates.saleDate;
-    } 
-    if (expenses != null){
+    }
+    if (expenses != null) {
       lastBlock = lastTrade > expenses.date ? lastBlock : expenses.blockNumber;
       lastTrade = lastTrade > expenses.date ? lastTrade : expenses.date;
-    } 
+    }
   } catch (error) {
     console.error(error);
   }
-  return {date: lastTrade, block: lastBlock};
+  return { date: lastTrade, block: lastBlock };
 }
 
 async function updateDB({ mappedTrades, mapped_expenses }: any) {

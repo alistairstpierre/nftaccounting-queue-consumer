@@ -31,14 +31,22 @@ export const get_alchemy_imageurls_and_collectionnames = async (trades: Trade[])
     if (element.projectAddress && element.tokenId) {
       const nft = data.find((x: any) => x.contract.address == element.projectAddress && x.id.tokenId == element.tokenId);
       if (nft) {
-        element.projectName = element.projectName == undefined || element.projectName == "" ? nft.contractMetadata.name : element.projectName;
-        if (nft.media[0].gateway.includes("alchemyapi")) {
-          element.imgUrl = editAlchemyUrl(nft.media[0].gateway, 40);
-        } else if(nft.contractMetadata.openSea.imageUrl != undefined){
-          element.imgUrl = editOpenseaUrl(nft.contractMetadata.openSea.imageUrl, 250);
-        }
-        else {
-          element.imgUrl = nft.metadata.image;
+        try{
+          element.projectName = element.projectName == undefined || element.projectName == "" ? nft.contractMetadata.name : element.projectName;
+          if(nft.media[0].thumbnail != undefined){
+            element.imgUrl = nft.media[0].thumbnail;
+          }
+          else if (nft.media[0].gateway.includes("alchemyapi")) {
+            element.imgUrl = editAlchemyUrl(nft.media[0].gateway, 40);
+          } else if(nft.contractMetadata.opensea != undefined){
+            element.imgUrl = editOpenseaUrl(nft.contractMetadata.opensea.imageUrl, 250);
+          }
+          else {
+            element.imgUrl = nft.metadata.image;
+          }
+        }catch(err){
+          console.log(nft)
+          console.log(err)
         }
       }
     }
