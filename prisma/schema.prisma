@@ -51,7 +51,6 @@ model Note {
 
 model User {
   walletAddress     String        @id @unique @db.VarChar(100)
-  tradesUpdatedAt   DateTime?
   dataStatus        DataStatus    @default(NONE)
   hiddenCollections String[]
   secondaryWallets  String[]
