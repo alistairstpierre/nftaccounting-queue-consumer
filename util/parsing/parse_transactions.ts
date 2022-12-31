@@ -41,8 +41,8 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
                 date: new Date(Number(item.timeStamp) * 1000),
                 gas: Number(item.gasUsed) * Number(item.gasPrice),
             });
-        } else if (item.functionName.toLowerCase().includes("swap")
-            || item.functionName.toLowerCase().includes("multicall")) {
+        } else if (item.functionName?.toLowerCase().includes("swap")
+            || item.functionName?.toLowerCase().includes("multicall")) {
             transactions.push({
                 type: tx_type.SWAP,
                 tx_hash: item.hash,
@@ -50,9 +50,9 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
                 date: new Date(Number(item.timeStamp) * 1000),
                 gas: Number(item.gasUsed) * Number(item.gasPrice),
             });
-        } else if (item.functionName.toLowerCase().includes(("withdraw")) ||
-            item.functionName.toLowerCase().includes(("deposit")) ||
-            item.functionName.toLowerCase().includes(("move")) ||
+        } else if (item.functionName?.toLowerCase().includes(("withdraw")) ||
+            item.functionName?.toLowerCase().includes(("deposit")) ||
+            item.functionName?.toLowerCase().includes(("move")) ||
             item.functionName == "") {
             transactions.push({
                 type: tx_type.MISC,
@@ -61,7 +61,7 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
                 date: new Date(Number(item.timeStamp) * 1000),
                 gas: Number(item.gasUsed) * Number(item.gasPrice),
             });
-        } else if (item.functionName.toLowerCase().includes("approv")) {
+        } else if (item.functionName?.toLowerCase().includes("approv")) {
             transactions.push({
                 type: tx_type.LISTING,
                 tx_hash: item.hash,
@@ -69,7 +69,7 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
                 date: new Date(Number(item.timeStamp) * 1000),
                 gas: Number(item.gasUsed) * Number(item.gasPrice),
             });
-        } else if (item.functionName.toLowerCase().includes("stake")) {
+        } else if (item.functionName?.toLowerCase().includes("stake")) {
             transactions.push({
                 type: tx_type.STAKE,
                 tx_hash: item.hash,
@@ -77,7 +77,7 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
                 date: new Date(Number(item.timeStamp) * 1000),
                 gas: Number(item.gasUsed) * Number(item.gasPrice),
             });
-        } else if (item.functionName.toLowerCase().includes("cancel")) {
+        } else if (item.functionName?.toLowerCase().includes("cancel")) {
             transactions.push({
                 type: tx_type.CANCELLED,
                 tx_hash: item.hash,
@@ -218,7 +218,7 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
             if (purchases.find((p) => p.tx_hash == item.hash) != undefined) continue;
             if (item.tokenName == '') continue;
             const normalEtherscanMatch = etherscanTransactions.find((tx) => item.hash == tx.hash);
-            if(normalEtherscanMatch?.functionName.includes('move')) continue;
+            if(normalEtherscanMatch?.functionName?.includes('move')) continue;
             const dataMatch = etherscanNFTTransactions.filter((tx) => tx.hash == item.hash);
             if (dataMatch.length == 0) continue;
             for (const data of dataMatch) {
