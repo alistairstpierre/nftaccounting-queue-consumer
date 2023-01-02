@@ -50,7 +50,8 @@ export const get_alchemy_asset_transfers = async () => {
     let next: string | undefined = undefined;
     const promise: any = [];
     let startTime = performance.now();
-    while (global.is_fetching_asset_transfers) {
+    let count = 0;
+    while (global.is_fetching_asset_transfers && count < 30) {
         await fetch_1_alchemy(next)
         .then((res) => {
             if (global.request_aborted) {
@@ -68,9 +69,10 @@ export const get_alchemy_asset_transfers = async () => {
             return blockCheck.data;
         })
         .then((data) => promise.push(data));
+        count++;
     }
     const endTime = performance.now();
-    console.log("alchemy call time", endTime - startTime);
+    console.log(`Fetching alchemy asset transfers took ${endTime - startTime} milliseconds`);
     return Promise.all(promise);
 };
 

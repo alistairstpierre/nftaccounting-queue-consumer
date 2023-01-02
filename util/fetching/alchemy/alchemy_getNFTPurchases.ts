@@ -12,7 +12,6 @@ const fetch_1_alchemy = async (next: string | undefined) => {
 
     const alchemy = new Alchemy(config);
 
-    const startTime = performance.now();
     try {
         const promise = await alchemy.nft.getNftSales({
             fromBlock: 0,
@@ -20,8 +19,6 @@ const fetch_1_alchemy = async (next: string | undefined) => {
             buyerAddress: global.walletAddress,
             pageKey: pageKey != "" ? pageKey : undefined,
         }).then((data) => {
-            const endTime = performance.now();
-            console.log(`Fetching alchemy asset transfers took ${endTime - startTime} milliseconds`);
             return data;
         }).catch(function (error) {
             console.error(error);
@@ -49,6 +46,7 @@ const checkForBlockNum = (data: NftSale[]) => {
 
 export const get_alchemy_nft_purchases = async () => {
     global.is_fetching_nft_purchases = true;
+    const startTime = performance.now();
     let next: string | undefined = undefined;
     const promise: any = [];
     while (global.is_fetching_nft_purchases) {
@@ -71,6 +69,7 @@ export const get_alchemy_nft_purchases = async () => {
         .then((data) => promise.push(data));
     }
     const endTime = performance.now();
+    console.log(`Fetching alchemy purchases took ${endTime - startTime} milliseconds`);
     return Promise.all(promise);
 };
 

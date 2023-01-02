@@ -40,6 +40,8 @@ const resetGlobals = () => {
  * @param {Function} ack - callback function
  */
 
+// deleteAllData();
+
 const handleRequest = async (payload: any, ack: any) => {
   try {
     console.log("start data processing");
@@ -276,7 +278,7 @@ async function updateDB({ mappedTrades, mapped_expenses }: any) {
   })
   .then((t) => {return {success: t.count}})
   .catch((e) => { 
-    console.log(e) 
+    console.log("db expense update error") 
     return {success: 0}
   });
   const trades = await prisma.eRC721Trade.createMany({
@@ -284,7 +286,7 @@ async function updateDB({ mappedTrades, mapped_expenses }: any) {
   })
   .then((t) => {return {success: t.count}})
   .catch((e) => {
-    console.log(e)
+    console.log("db trades update error") 
     return {success: 0}
   });
   return {expenses, trades};
