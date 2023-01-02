@@ -40,8 +40,6 @@ const resetGlobals = () => {
  * @param {Function} ack - callback function
  */
 
-deleteAllData();
-
 const handleRequest = async (payload: any, ack: any) => {
   try {
     console.log("start data processing");
