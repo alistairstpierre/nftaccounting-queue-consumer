@@ -35,8 +35,8 @@ export function trades_parse(purchases: Transaction[], sales: Transaction[]) {
         }
 
         const trade: Trade = {
-            purchaseUUID: `${tx.tx_hash}-${tx.collection_contract}-${tx.token_id}`,
-            saleUUID: match != undefined ? `${match.tx_hash}-${tx.collection_contract}-${tx.token_id}` : undefined,
+            purchaseUUID: `${global.walletAddress}-${tx.tx_hash}-${tx.collection_contract}-${tx.token_id}`,
+            saleUUID: match != undefined ? `${global.walletAddress}-${match.tx_hash}-${tx.collection_contract}-${tx.token_id}` : undefined,
             purchaseType: tx.type,
             purchaseTransaction: tx.tx_hash,
             saleType: match != undefined ? match.type : undefined,

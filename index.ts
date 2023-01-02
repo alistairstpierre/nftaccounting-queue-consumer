@@ -13,7 +13,7 @@ import { get_etherscan_erc1155_transactions } from './util/fetching/etherscan/et
 import { get_etherscan_erc721_transactions } from './util/fetching/etherscan/etherscan_getERC721Transactions';
 import { get_etherscan_erc20_transactions } from "./util/fetching/etherscan/etherscan_getERC20Transactions";
 import { trades_parse } from "./util/parsing/trades";
-import { Trade, Transaction } from "./interfaces";
+import { Trade, Transaction } from './interfaces';
 import { get_nftport } from "./util/fetching/nftport/nftport_getTransactions";
 import { get_mnemonic_sender_data } from './util/fetching/mnemonic/mnemonic_getSenderNFTTransfers';
 import { get_mnemonic_recipient_data } from './util/fetching/mnemonic/mnemonic_getRecipientNFTTransfer';
@@ -40,11 +40,12 @@ const resetGlobals = () => {
  * @param {Function} ack - callback function
  */
 
-// deleteAllData();
+deleteAllData();
 
 const handleRequest = async (payload: any, ack: any) => {
   try {
     console.log("start data processing");
+    const totalTimeStart = performance.now();
     resetGlobals();
     const payloadData = JSON.parse(payload.content.toString());
     global.walletAddress = payloadData.wallet.toLowerCase();
@@ -66,8 +67,6 @@ const handleRequest = async (payload: any, ack: any) => {
       get_mnemonic_recipient_data()
     ]);
 
-    const parsed_transactions = await parse_transactions(fetched_data);
-
     if (global.request_aborted) {
       console.log("request aborted");
       failureStatus();
@@ -75,6 +74,8 @@ const handleRequest = async (payload: any, ack: any) => {
       await disconnectPrisma();
       return;
     }
+
+    const parsed_transactions = await parse_transactions(fetched_data);
     const data = trades_parse(parsed_transactions.purchases, parsed_transactions.sales);
 
     const tradesWithUrlsAndCollectionNames = await get_alchemy_imageurls_and_collectionnames(data.trades);
@@ -88,12 +89,12 @@ const handleRequest = async (payload: any, ack: any) => {
 
     if (tradesWithUrlsAndCollectionNames == undefined) return;
     const filteredTrades = tradesWithUrlsAndCollectionNames.filter((trade: Trade) => {
-      if(trade.projectName == undefined || trade.projectName.length >= 255) trade.projectName = trade.projectAddress;
-      if(trade.imgUrl == undefined || trade.imgUrl.length > 510) trade.imgUrl = "/Rhombus.gif";
-      return trade.purchaseUUID.length < 255;
+      if (trade.projectName == undefined || trade.projectName.length >= 255) trade.projectName = trade.projectAddress;
+      if (trade.imgUrl == undefined || trade.imgUrl.length > 510) trade.imgUrl = "/Rhombus.gif";
+      return trade.purchaseUUID != undefined && trade.purchaseUUID.length < 255;
     });
 
-    const mappedTrades = filteredTrades.map((trade: Trade, index: Number) => {
+    const mappedTrades = await filteredTrades.map((trade: Trade, index: Number) => {
       return {
         purchaseUUID: trade.purchaseUUID,
         saleUUID: trade.saleUUID,
@@ -119,7 +120,7 @@ const handleRequest = async (payload: any, ack: any) => {
       };
     });
 
-    const mapped_expenses = parsed_transactions.other.map((expense: Transaction) => {
+    const mapped_expenses = await parsed_transactions.other.map((expense: Transaction) => {
       return {
         cost: expense.gas,
         date: expense.date,
@@ -130,19 +131,32 @@ const handleRequest = async (payload: any, ack: any) => {
     });
 
     let startTime = performance.now();
+
     if (mappedTrades.length > 0 || mapped_expenses.length > 0) {
-      await updateDB({ mappedTrades, mapped_expenses })
+      const {expenses, trades} = await updateDB({ mappedTrades, mapped_expenses })
+
+      if(expenses.success == 0 || trades.success == 0) {
+        deleteWalletData(global.walletAddress);
+        console.log("error updating db");
+        failureStatus();
+        ack();
+        await disconnectPrisma();
+        return;
+      }
       let endTime = performance.now();
       console.log(`updating db took ${endTime - startTime} milliseconds`);
     } else {
       console.log("no new data");
     }
+
     await prisma.user.update({
       where: { walletAddress: global.walletAddress },
       data: {
         dataStatus: DataStatus.SUCCESS,
       },
     });
+    const totalTimeEnd = performance.now();
+    console.log(`total request time took ${totalTimeEnd - totalTimeStart} milliseconds`);
     ack();
     await disconnectPrisma();
     console.log("data processing complete");
@@ -151,17 +165,22 @@ const handleRequest = async (payload: any, ack: any) => {
   }
 };
 
-async function deleteAllData() {
+async function deleteWalletData(walletAddress: string) {
   await prisma.eRC721Trade.deleteMany({
     where: {
-      walletAddress: global.walletAddress,
+      walletAddress: walletAddress,
     },
   });
   await prisma.expense.deleteMany({
     where: {
-      walletAddress: global.walletAddress,
+      walletAddress: walletAddress,
     },
   });
+}
+
+async function deleteAllData() {
+  await prisma.eRC721Trade.deleteMany();
+  await prisma.expense.deleteMany();
 }
 
 async function checkForDBUser() {
@@ -254,16 +273,23 @@ async function findStartDate() {
 }
 
 async function updateDB({ mappedTrades, mapped_expenses }: any) {
-  try {
-    await prisma.expense.createMany({
-      data: mapped_expenses,
-    })
-    await prisma.eRC721Trade.createMany({
-      data: mappedTrades,
-    });
-  } catch (error) {
-    console.error(error);
-  }
+  const expenses = await prisma.expense.createMany({
+    data: mapped_expenses,
+  })
+  .then((t) => {return {success: t.count}})
+  .catch((e) => { 
+    console.log(e) 
+    return {success: 0}
+  });
+  const trades = await prisma.eRC721Trade.createMany({
+    data: mappedTrades,
+  })
+  .then((t) => {return {success: t.count}})
+  .catch((e) => {
+    console.log(e)
+    return {success: 0}
+  });
+  return {expenses, trades};
 }
 
 async function processUploads() {

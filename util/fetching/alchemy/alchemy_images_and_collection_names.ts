@@ -32,8 +32,14 @@ export const get_alchemy_imageurls_and_collectionnames = async (trades: Trade[])
       const nft = data.find((x: any) => x.contract.address == element.projectAddress && x.id.tokenId == element.tokenId);
       if (nft) {
         try{
-          element.projectName = element.projectName == undefined || element.projectName == "" ? nft.contractMetadata.name : element.projectName;
-          if (nft.media[0].gateway.includes("alchemyapi")) {
+          if(nft.contractMetadata != undefined){
+            element.projectName = element.projectName == undefined || element.projectName == "" ? nft.contractMetadata.name : element.projectName;
+          }
+          if((nft.contract.address as string).toLowerCase() == "0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85".toLowerCase()){
+            element.imgUrl = "/ens.png";
+            element.projectName = "Ethereum Name Service"
+          }
+          else if (nft.media[0].gateway.includes("alchemyapi")) {
             element.imgUrl = editAlchemyUrl(nft.media[0].gateway, 40);
           } else if(nft.contractMetadata.openSea != undefined && nft.contractMetadata.openSea?.imageUrl != undefined){
             element.imgUrl = editOpenseaUrl(nft.contractMetadata.openSea.imageUrl, 250);

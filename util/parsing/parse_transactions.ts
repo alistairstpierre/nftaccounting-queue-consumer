@@ -4,14 +4,18 @@ import { AssetTransfersCategory, AssetTransfersResult, NftSale, NftSaleMarketpla
 import { ethToGwei, ethToWei } from '../helpers';
 
 export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], EtherscanResult[], EtherscanResult[], AssetTransfersResult[], NftSale[], NftSale[], MnemonicNftTransfer[], MnemonicNftTransfer[]]) {
-    const alchemyTransfers: AssetTransfersResult[] = data[4].flat(2)
-    const alchemySales: NftSale[] = data[5].flat(2)
-    const alchemyPurchases: NftSale[] = data[6].flat(2)
-    const etherscanTransactions: EtherscanResult[] = data[0].concat(data[1]).flat(2)
-    const etherscanNFTTransactions: EtherscanResult[] = data[2].concat(data[3]).flat(2)
-    const mnemonicNftTransfers: MnemonicNftTransfer[] = data[7].concat(data[8]).flat(2)
+    const alchemyTransfers: AssetTransfersResult[] = data[4].flat(3)
+    const alchemySales: NftSale[] = data[5].flat(3)
+    const alchemyPurchases: NftSale[] = data[6].flat(3)
+    const etherscanNormalTransactions = data[0] != undefined ? data[0].flat(3) : []
+    const etherscanInternalTransactions = data[1] != undefined ? data[1].flat(3) : []
+    const etherscanERC721Transactions = data[2] != undefined ? data[2].flat(3) : []     
+    const etherscanERC1155Transactions = data[3] != undefined ? data[3].flat(3) : []
+    const etherscanTransactions: EtherscanResult[] = etherscanNormalTransactions.concat(etherscanInternalTransactions)
+    const etherscanNFTTransactions: EtherscanResult[] = etherscanERC721Transactions.concat(etherscanERC1155Transactions)
+    const mnemonicNftTransfers: MnemonicNftTransfer[] = data[7].concat(data[8]).flat(3)
     const transactions = <Transaction[]>[];
-    for (const item of data[0]) {
+    for (const item of etherscanNormalTransactions) {
         if (transactions.find((tx) => tx.tx_hash == item.hash) != undefined) continue;
         if (new Date(Number(item.timeStamp) * 1000) <= global.request_date && Number(item.blockNumber) <= global.request_block) continue;
         for (const transfer of alchemyTransfers) {

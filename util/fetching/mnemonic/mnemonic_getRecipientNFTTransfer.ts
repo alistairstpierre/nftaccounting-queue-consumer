@@ -50,12 +50,15 @@ const fetch_1_mnemonic = async (next: string | undefined) => {
                 return data.data.nftTransfers;
             }).catch(function (error) {
                 console.error(error);
+                global.is_fetching_mnemonic_receiver_data = false;
                 global.request_aborted = true;
             });
         return promise;
     } catch (error: any) {
         console.log(error);
+        global.is_fetching_mnemonic_receiver_data = false;
         global.request_aborted = true;
+        return null;
     }
 };
 

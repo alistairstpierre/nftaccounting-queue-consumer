@@ -48,11 +48,14 @@ const fetch_1_mnemonic = async (next: string | undefined) => {
             }).catch(function (error) {
                 console.error(error);
                 global.request_aborted = true;
+                global.is_fetching_mnemonic_sender_data = false;
             });
         return promise;
     } catch (error: any) {
         console.log(error);
         global.request_aborted = true;
+        global.is_fetching_mnemonic_sender_data = false;
+        return null;
     }
 };
 
