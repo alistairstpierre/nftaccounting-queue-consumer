@@ -50,7 +50,7 @@ const handleRequest = async (payload: any, ack: any) => {
     const payloadData = JSON.parse(payload.content.toString());
     global.walletAddress = payloadData.wallet.toLowerCase();
 
-    deleteWalletData(global.walletAddress)
+    // deleteWalletData(global.walletAddress)
 
     await checkForDBUser();
     pendingStatus();
@@ -135,32 +135,32 @@ const handleRequest = async (payload: any, ack: any) => {
 
     let startTime = performance.now();
 
-    // if (mappedTrades.length > 0 || mapped_expenses.length > 0) {
-    //   const {expenses, trades} = await updateDB({ mappedTrades, mapped_expenses })
+    if (mappedTrades.length > 0 || mapped_expenses.length > 0) {
+      const {expenses, trades} = await updateDB({ mappedTrades, mapped_expenses })
 
-    //   if(expenses.success == 0 || trades.success == 0) {
-    //     deleteWalletData(global.walletAddress);
-    //     console.log("error updating db");
-    //     failureStatus();
-    //     ack();
-    //     await disconnectPrisma();
-    //     return;
-    //   }
-    //   let endTime = performance.now();
-    //   console.log(`updating db took ${endTime - startTime} milliseconds`);
-    // } else {
-    //   console.log("no new data");
-    // }
+      if(expenses.success == 0 || trades.success == 0) {
+        deleteWalletData(global.walletAddress);
+        console.log("error updating db");
+        failureStatus();
+        ack();
+        await disconnectPrisma();
+        return;
+      }
+      let endTime = performance.now();
+      console.log(`updating db took ${endTime - startTime} milliseconds`);
+    } else {
+      console.log("no new data");
+    }
 
-    // await prisma.user.update({
-    //   where: { walletAddress: global.walletAddress },
-    //   data: {
-    //     dataStatus: DataStatus.SUCCESS,
-    //   },
-    // });
-    // const totalTimeEnd = performance.now();
-    // console.log(`total request time took ${totalTimeEnd - totalTimeStart} milliseconds`);
-    // ack();
+    await prisma.user.update({
+      where: { walletAddress: global.walletAddress },
+      data: {
+        dataStatus: DataStatus.SUCCESS,
+      },
+    });
+    const totalTimeEnd = performance.now();
+    console.log(`total request time took ${totalTimeEnd - totalTimeStart} milliseconds`);
+    ack();
     await disconnectPrisma();
     console.log("data processing complete");
   } catch (error) {
