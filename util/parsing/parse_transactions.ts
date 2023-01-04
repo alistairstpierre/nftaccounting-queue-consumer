@@ -138,7 +138,7 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
                 tx_hash: purchase.transactionHash,
                 block: purchase.blockNumber.toString(),
                 date: new Date(Number(dataMatch[0].timeStamp) * 1000),
-                gas: purchase.taker == NftSaleTakerType.BUYER ? Number(item.gas) / dataMatch.length : 0,
+                gas: purchase.taker == NftSaleTakerType.BUYER ? (Number(item.gasUsed) * Number(item.gasPrice)) / dataMatch.length : 0,
                 value: Number(purchase.sellerFee.amount) / dataMatch.length,
                 collection_contract: purchase.contractAddress,
                 token_id: item.tokenID,
@@ -165,7 +165,7 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
                 tx_hash: sale.transactionHash,
                 block: sale.blockNumber.toString(),
                 date: new Date(Number(dataMatch[0].timeStamp) * 1000),
-                gas: sale.taker == NftSaleTakerType.BUYER ? 0 : Number(dataMatch[i].gas) / dataMatch.length,
+                gas: sale.taker == NftSaleTakerType.BUYER ? 0 : (Number(dataMatch[0].gasUsed) * Number(dataMatch[0].gasPrice)) / dataMatch.length,
                 value: Number(sale.sellerFee.amount) / dataMatch.length,
                 collection_contract: sale.contractAddress,
                 token_id: dataMatch[i].tokenID,
@@ -178,13 +178,6 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
             });
         }
     }
-
-    for (const item of transactions) {
-        if (purchases.find((purchases) => purchases.tx_hash == item.tx_hash) == undefined && sales.find((sales) => sales.tx_hash == item.tx_hash) == undefined) {
-            // check if date is greater than global.request date and block is greater than global.request block
-            other.push(item);
-        }
-    };
 
     for (const item of etherscanNFTTransactions) {
         if (item.from.toLowerCase() == global.walletAddress.toLowerCase()) {
@@ -223,6 +216,7 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
             if (purchases.find((p) => p.tx_hash == item.hash) != undefined) continue;
             if (item.tokenName == '') continue;
             const normalEtherscanMatch = etherscanTransactions.find((tx) => item.hash == tx.hash);
+            const mnemonicNftTransfer = mnemonicNftTransfers.find((tx) => item.hash == tx.blockchainEvent.txHash);
             if(normalEtherscanMatch?.functionName?.includes('move')) continue;
             const dataMatch = etherscanNFTTransactions.filter((tx) => tx.hash == item.hash);
             if (dataMatch.length == 0) continue;
@@ -232,8 +226,8 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
                     tx_hash: item.hash,
                     block: item.blockNumber.toString(),
                     date: new Date(Number(item.timeStamp) * 1000),
-                    gas: normalEtherscanMatch?.gasPrice ? (Number(normalEtherscanMatch?.gasUsed) * Number(normalEtherscanMatch?.gasPrice) / dataMatch.length) : 0,
-                    value: Number(normalEtherscanMatch?.value) > 0 ? Number(normalEtherscanMatch?.value) / dataMatch.length : 0,
+                    gas: (Number(data?.gasUsed) * Number(data?.gasPrice) / dataMatch.length),
+                    value: mnemonicNftTransfer != undefined ? ethToWei(Number(mnemonicNftTransfer?.senderReceived.totalEth)) : 0,
                     collection_contract: data.contractAddress,
                     token_id: data.tokenID,
                     collection_name: data.tokenName == '' || data.tokenName == undefined ? undefined : data.tokenName,
@@ -242,6 +236,12 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
             }
         }
     }
+
+    for (const item of transactions) {
+        if (purchases.find((purchases) => purchases.tx_hash == item.tx_hash) == undefined && sales.find((sales) => sales.tx_hash == item.tx_hash) == undefined) {
+            other.push(item);
+        }
+    };
 
     // const p = purchases.find((p) => p.tx_hash == "0xc61757a3675ef08091dcc1ff9744b9893504938b481842d49fe4636f95c41462")
     // if(p != undefined) console.log(p)
