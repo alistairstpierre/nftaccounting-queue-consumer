@@ -53,11 +53,11 @@ const handleRequest = async (payload: any, ack: any) => {
     await checkForDBUser();
     pendingStatus();
 
-    // deleteWalletData(global.walletAddress)
+    deleteWalletData(global.walletAddress)
 
     const startDateAndBlock = await findStartDate();
-    global.request_date = startDateAndBlock.date;
-    global.request_block = startDateAndBlock.block;
+    // global.request_date = startDateAndBlock.date;
+    // global.request_block = startDateAndBlock.block;
     console.log(global.walletAddress, global.request_date, global.request_block);
     const fetched_data = await Promise.all([
       get_etherscan_normal_transactions(),

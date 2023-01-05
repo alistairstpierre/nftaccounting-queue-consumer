@@ -205,7 +205,7 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
                     block: item.blockNumber.toString(),
                     date: new Date(Number(item.timeStamp) * 1000),
                     gas: 0,
-                    value: mnemonicNftTransfer != undefined ? Math.round(ethToWei(Number(mnemonicNftTransfer.recipientPaid.totalEth)))
+                    value: mnemonicNftTransfer != undefined ? Math.round(ethToWei(Number(mnemonicNftTransfer.recipientPaid.totalEth))) / dataMatch.length
                         : Number(normalEtherscanMatch?.value) > 0 ? Number(normalEtherscanMatch?.value) / dataMatch.length : 0,
                     collection_contract: data.contractAddress,
                     token_id: data.tokenID,
