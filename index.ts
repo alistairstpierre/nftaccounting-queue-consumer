@@ -53,7 +53,7 @@ const handleRequest = async (payload: any, ack: any) => {
     await checkForDBUser();
     pendingStatus();
 
-    deleteWalletData(global.walletAddress)
+    // deleteWalletData(global.walletAddress)
 
     const startDateAndBlock = await findStartDate();
     // global.request_date = startDateAndBlock.date;
