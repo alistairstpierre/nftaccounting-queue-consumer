@@ -29,7 +29,7 @@ const resetGlobals = () => {
   global.is_fetching_nft_purchases = false;
   global.is_fetching_etherscan_transactions = false;
   global.request_aborted = false;
-  global.request_date = new Date();
+  global.request_date = new Date(0);
   global.request_block = 0;
   global.alchemy_call_amount = 0;
 }
@@ -40,7 +40,7 @@ const resetGlobals = () => {
  * @param {Function} ack - callback function
  */
 
-// deleteAllData();
+deleteAllData();
 
 const handleRequest = async (payload: any, ack: any) => {
   try {
@@ -50,10 +50,11 @@ const handleRequest = async (payload: any, ack: any) => {
     const payloadData = JSON.parse(payload.content.toString());
     global.walletAddress = payloadData.wallet.toLowerCase();
 
-    // deleteWalletData(global.walletAddress)
-
     await checkForDBUser();
     pendingStatus();
+
+    // deleteWalletData(global.walletAddress)
+
     const startDateAndBlock = await findStartDate();
     global.request_date = startDateAndBlock.date;
     global.request_block = startDateAndBlock.block;
@@ -69,6 +70,12 @@ const handleRequest = async (payload: any, ack: any) => {
       get_mnemonic_sender_data(),
       get_mnemonic_recipient_data()
     ]);
+
+    for(const data of fetched_data) {
+      if(!Array.isArray(data)) {
+        global.request_aborted = true;
+      }
+    }
 
     if (global.request_aborted) {
       console.log("request aborted");
