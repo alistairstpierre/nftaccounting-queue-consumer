@@ -170,7 +170,7 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
                 block: sale.blockNumber.toString(),
                 date: new Date(Number(dataMatch[0].timeStamp) * 1000),
                 gas: sale.taker == NftSaleTakerType.BUYER ? 0 : (Number(dataMatch[0].gasUsed) * Number(dataMatch[0].gasPrice)) / dataMatch.length,
-                value: Number(sale.sellerFee.amount) / dataMatch.length,
+                value: ethToWei(Number(mnemonicNftTransfer?.recipientPaid.totalEth)) / dataMatch.length,
                 collection_contract: sale.contractAddress,
                 token_id: dataMatch[i].tokenID,
                 market_fee: mnemonicMarketAndRoyalty != undefined ? Math.round(mnemonicMarketAndRoyalty.marketFee / dataMatch.length) : undefined,
@@ -259,13 +259,13 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
     //     console.log(item)
     // }
 
-    // let testMatch:any = etherscanNFTTransactions.filter((item) => item.hash.toLowerCase() == ("0x0d737697a82c6fba2f72f73d164d0b1715b5ddfaf99fce4d43b23f0cebc312da".toLowerCase()));
+    // let testMatch:any = etherscanNFTTransactions.filter((item) => item.hash.toLowerCase() == ("0x95a2c099a0097b4d738df31d62e395df87b3e08467ebc2f1b96d929f46dc9860".toLowerCase()));
     // if(testMatch.length > 0) console.log("etherscannft test", testMatch);
 
-    // testMatch = alchemyPurchases.filter((item) => item.transactionHash.toLowerCase() == ("0x0d737697a82c6fba2f72f73d164d0b1715b5ddfaf99fce4d43b23f0cebc312da".toLowerCase()));
+    // testMatch = alchemySales.filter((item) => item.transactionHash.toLowerCase() == ("0x95a2c099a0097b4d738df31d62e395df87b3e08467ebc2f1b96d929f46dc9860".toLowerCase()));
     // if(testMatch.length > 0) console.log("alchemySales test", testMatch);
 
-    // testMatch = mnemonicNftTransfers.filter((item) => item.blockchainEvent.txHash == ("0x0d737697a82c6fba2f72f73d164d0b1715b5ddfaf99fce4d43b23f0cebc312da".toLowerCase()));
+    // testMatch = mnemonicNftTransfers.filter((item) => item.blockchainEvent.txHash == ("0x95a2c099a0097b4d738df31d62e395df87b3e08467ebc2f1b96d929f46dc9860".toLowerCase()));
     // if(testMatch.length > 0) console.log("mnemonicsNFT test", testMatch);
 
     return { purchases, sales, other };
