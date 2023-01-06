@@ -17,6 +17,7 @@ import { Trade, Transaction } from './interfaces';
 import { get_nftport } from "./util/fetching/nftport/nftport_getTransactions";
 import { get_mnemonic_sender_data } from './util/fetching/mnemonic/mnemonic_getSenderNFTTransfers';
 import { get_mnemonic_recipient_data } from './util/fetching/mnemonic/mnemonic_getRecipientNFTTransfer';
+import { tx_type } from './util/nft-constants';
 
 const { promisify } = require("util");
 const RMQConsumer = new Broker().init();
@@ -56,8 +57,9 @@ const handleRequest = async (payload: any, ack: any) => {
     // deleteWalletData(global.walletAddress)
 
     const startDateAndBlock = await findStartDate();
-    // global.request_date = startDateAndBlock.date;
-    // global.request_block = startDateAndBlock.block;
+    global.request_date = startDateAndBlock.date;
+    global.request_block = startDateAndBlock.block;
+
     console.log(global.walletAddress, global.request_date, global.request_block);
     const fetched_data = await Promise.all([
       get_etherscan_normal_transactions(),
@@ -139,6 +141,12 @@ const handleRequest = async (payload: any, ack: any) => {
         walletAddress: global.walletAddress,
       }
     });
+
+    // mappedTrades.forEach((trade: Trade) => {
+    //   if(trade.purchaseTransaction.toLowerCase() == "0xe7a8a3f7d0639d4b367f669a419f42d604138c0b24133a59e2b2b751d097e41c".toLowerCase()){
+    //     console.log(trade);
+    //   }
+    // });
 
     let startTime = performance.now();
 

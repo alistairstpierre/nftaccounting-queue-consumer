@@ -51,7 +51,7 @@ export function trades_parse(purchases: Transaction[], sales: Transaction[]) {
             saleBlock: match != undefined ? Number(match.block) : undefined,
             cost: tx.value,
             sale: match != undefined ? match.value : undefined,
-            feeGas: match != undefined ? (match.gas != undefined ? match.gas : 0) + (tx.gas != undefined ? tx.gas : 0) : 0,
+            feeGas: (tx.gas != undefined ? tx.gas : 0) + (match != undefined ? match.gas != undefined ? match.gas : 0 : 0),
             feeExchange: match != undefined ? (match.market_fee != undefined ? match.market_fee : getMarketFee(match.marketplace, match)) : 0,
             feeRoyalty: match != undefined ? (match.royalty != undefined ? match.royalty : 0) : 0,
             contract: tx.category,

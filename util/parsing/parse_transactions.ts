@@ -18,9 +18,9 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
     for (const item of etherscanNormalTransactions) {
         if (transactions.find((tx) => tx.tx_hash == item.hash) != undefined) continue;
         if (new Date(Number(item.timeStamp) * 1000) <= global.request_date && Number(item.blockNumber) <= global.request_block) continue;
-        for (const transfer of alchemyTransfers) {
+        for (const transfer of etherscanNFTTransactions) {
             if (item.hash == transfer.hash) {
-                if (transfer.from == '0x0000000000000000000000000000000000000000' && transfer.tokenId != null) {
+                if (transfer.from == '0x0000000000000000000000000000000000000000' && transfer.tokenID != null) {
                     transactions.push({
                         type: tx_type.MINT,
                         tx_hash: item.hash,
@@ -28,10 +28,9 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
                         date: new Date(Number(item.timeStamp) * 1000),
                         gas: Number(item.gasUsed) * Number(item.gasPrice),
                         value: Number(item.value),
-                        collection_contract: transfer.rawContract.address ? transfer.rawContract.address : undefined,
-                        token_id: transfer.tokenId ? Number(transfer.tokenId).toString() : undefined,
-                        uuid: transfer.uniqueId,
-                        category: transfer.category,
+                        collection_contract: transfer.contractAddress,
+                        token_id: transfer.tokenID,
+                        category: AssetTransfersCategory.INTERNAL,
                     });
                 }
             }
@@ -128,13 +127,17 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
         if (purchases.find((p) => p.tx_hash == purchase.transactionHash) != undefined) continue;
         const dataMatch = etherscanNFTTransactions.filter((item) => item.hash == purchase.transactionHash);
         if (dataMatch.length == 0) continue;
-        const type = getPurchaseType(purchase);
+        const mnemonicNftTransfer = mnemonicNftTransfers.find((tx) => purchase.transactionHash == tx.blockchainEvent.txHash);
+        let mnemonicType =  getPurchaseType(purchase);
+        if (mnemonicNftTransfer != undefined) {
+            mnemonicType = mnemonicNftTransfer.labels.includes('LABEL_TRANSFER') ? tx_type.TRANSFER : mnemonicType;
+        }
         const transfersMatch = alchemyTransfers.find((item) => item.hash == purchase.transactionHash);
         if (new Date(Number(dataMatch[0].timeStamp) * 1000) <= global.request_date && Number(dataMatch[0].blockNumber) <= global.request_block) continue;
         for (const item of dataMatch) {
             // console.log(purchase, item.gas)
             purchases.push({
-                type: type,
+                type: mnemonicType,
                 tx_hash: purchase.transactionHash,
                 block: purchase.blockNumber.toString(),
                 date: new Date(Number(dataMatch[0].timeStamp) * 1000),
@@ -247,25 +250,16 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
         }
     };
 
-    // const p = purchases.find((p) => p.tx_hash == "0xc61757a3675ef08091dcc1ff9744b9893504938b481842d49fe4636f95c41462")
-    // if(p != undefined) console.log(p)
-
-    // const s = sales.filter((s) => s.type == tx_type.TRANSFER)
-    // if(s.length > 0) console.log("sales with transfer", s)
-
-    // console.log("after etherscanNFT", purchases.length, sales.length)
-
-    // for (const item of mnemonicNftTransfers) {
-    //     console.log(item)
-    // }
-
-    // let testMatch:any = etherscanNFTTransactions.filter((item) => item.hash.toLowerCase() == ("0x95a2c099a0097b4d738df31d62e395df87b3e08467ebc2f1b96d929f46dc9860".toLowerCase()));
+    // let testMatch:any = etherscanNFTTransactions.filter((item) => item.hash.toLowerCase() == ("0xe7a8a3f7d0639d4b367f669a419f42d604138c0b24133a59e2b2b751d097e41c".toLowerCase()));
     // if(testMatch.length > 0) console.log("etherscannft test", testMatch);
 
-    // testMatch = alchemySales.filter((item) => item.transactionHash.toLowerCase() == ("0x95a2c099a0097b4d738df31d62e395df87b3e08467ebc2f1b96d929f46dc9860".toLowerCase()));
+    // testMatch = etherscanNormalTransactions.filter((item) => item.hash.toLowerCase() == ("0xe7a8a3f7d0639d4b367f669a419f42d604138c0b24133a59e2b2b751d097e41c".toLowerCase()));
+    // if(testMatch.length > 0) console.log("etherscannormal test", testMatch);
+
+    // testMatch = alchemyPurchases.filter((item) => item.transactionHash.toLowerCase() == ("0xe7a8a3f7d0639d4b367f669a419f42d604138c0b24133a59e2b2b751d097e41c".toLowerCase()));
     // if(testMatch.length > 0) console.log("alchemySales test", testMatch);
 
-    // testMatch = mnemonicNftTransfers.filter((item) => item.blockchainEvent.txHash == ("0x95a2c099a0097b4d738df31d62e395df87b3e08467ebc2f1b96d929f46dc9860".toLowerCase()));
+    // testMatch = mnemonicNftTransfers.filter((item) => item.blockchainEvent.txHash == ("0xe7a8a3f7d0639d4b367f669a419f42d604138c0b24133a59e2b2b751d097e41c".toLowerCase()));
     // if(testMatch.length > 0) console.log("mnemonicsNFT test", testMatch);
 
     return { purchases, sales, other };
