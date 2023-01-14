@@ -66,7 +66,6 @@ const handleRequest = async (payload: any, ack: any) => {
       get_etherscan_internal_transactions(),
       get_etherscan_erc721_transactions(),
       get_etherscan_erc1155_transactions(),
-      get_alchemy_asset_transfers(),
       get_alchemy_nft_sales(),
       get_alchemy_nft_purchases(),
       get_mnemonic_sender_data(),

@@ -3,17 +3,16 @@ import { tx_type } from '../nft-constants';
 import { AssetTransfersCategory, AssetTransfersResult, NftSale, NftSaleMarketplace, NftSaleTakerType } from 'alchemy-sdk';
 import { ethToGwei, ethToWei } from '../helpers';
 
-export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], EtherscanResult[], EtherscanResult[], AssetTransfersResult[], NftSale[], NftSale[], MnemonicNftTransfer[], MnemonicNftTransfer[]]) {
-    const alchemyTransfers: AssetTransfersResult[] = data[4].flat(3)
-    const alchemySales: NftSale[] = data[5].flat(3)
-    const alchemyPurchases: NftSale[] = data[6].flat(3)
+export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], EtherscanResult[], EtherscanResult[], NftSale[], NftSale[], MnemonicNftTransfer[], MnemonicNftTransfer[]]) {
+    const alchemySales: NftSale[] = data[4].flat(3)
+    const alchemyPurchases: NftSale[] = data[5].flat(3)
     const etherscanNormalTransactions = data[0] != undefined ? data[0].flat(3) : []
     const etherscanInternalTransactions = data[1] != undefined ? data[1].flat(3) : []
     const etherscanERC721Transactions = data[2] != undefined ? data[2].flat(3) : []
     const etherscanERC1155Transactions = data[3] != undefined ? data[3].flat(3) : []
     const etherscanTransactions: EtherscanResult[] = etherscanNormalTransactions.concat(etherscanInternalTransactions)
     const etherscanNFTTransactions: EtherscanResult[] = etherscanERC721Transactions.concat(etherscanERC1155Transactions)
-    const mnemonicNftTransfers: MnemonicNftTransfer[] = data[7].concat(data[8]).flat(3)
+    const mnemonicNftTransfers: MnemonicNftTransfer[] = data[6].concat(data[7]).flat(3)
     const transactions = <Transaction[]>[];
     for (const item of etherscanNormalTransactions) {
         if (transactions.find((tx) => tx.tx_hash == item.hash) != undefined) continue;
@@ -132,7 +131,6 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
         if (mnemonicNftTransfer != undefined) {
             mnemonicType = mnemonicNftTransfer.labels.includes('LABEL_TRANSFER') ? tx_type.TRANSFER : mnemonicType;
         }
-        const transfersMatch = alchemyTransfers.find((item) => item.hash == purchase.transactionHash);
         if (new Date(Number(dataMatch[0].timeStamp) * 1000) <= global.request_date && Number(dataMatch[0].blockNumber) <= global.request_block) continue;
         for (const item of dataMatch) {
             // console.log(purchase, item.gas)
@@ -149,7 +147,7 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
                 royalty: 0,
                 collection_name: item.tokenName == '' || item.tokenName == undefined ? undefined : item.tokenName,
                 marketplace: purchase.marketplace,
-                category: transfersMatch?.category,
+                category: mnemonicNftTransfer?.tokenType != undefined ? mnemonicNftTransfer?.tokenType : "",
             });
         }
     }
@@ -159,7 +157,6 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
         const dataMatch = etherscanNFTTransactions.filter((item) => item.hash == sale.transactionHash);
         if (dataMatch.length == 0) continue;
         const type = getSaleType(sale);
-        const transfersMatch = alchemyTransfers.find((item) => item.hash == sale.transactionHash);
         const mnemonicNftTransfer = mnemonicNftTransfers.find((tx) => sale.transactionHash == tx.blockchainEvent.txHash);
         let mnemonicMarketAndRoyalty = undefined
         if (mnemonicNftTransfer != undefined) {
@@ -179,8 +176,7 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
                 market_fee: mnemonicMarketAndRoyalty != undefined ? Math.round(mnemonicMarketAndRoyalty.marketFee / dataMatch.length) : undefined,
                 royalty: sale.royaltyFee ? Number(sale.royaltyFee?.amount) / dataMatch.length : 0,
                 marketplace: sale.marketplace,
-                category: transfersMatch?.category,
-                uuid: transfersMatch?.uniqueId,
+                category: mnemonicNftTransfer?.tokenType != undefined ? mnemonicNftTransfer?.tokenType : "",
                 collection_name: dataMatch[i].tokenName == '' || dataMatch[i].tokenName == undefined ? undefined : dataMatch[i].tokenName,
             });
         }

@@ -14,7 +14,7 @@ export interface Transaction {
   collection_name?: string;
   token_id?: string;
   market_fee?: number;
-  category?: AssetTransfersCategory;
+  category?: string;
   uuid?: string;
 }
 
@@ -104,7 +104,7 @@ export interface Trade {
   feeExchange?: number;
   feeRoyalty?: number;
   notes?: string;
-  contract?: AssetTransfersCategory;
+  contract?: string;
 }
 
 export interface TradeDisplay {
