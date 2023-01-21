@@ -223,13 +223,15 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
             if (normalEtherscanMatch?.functionName?.includes('move')) continue;
             const dataMatch = etherscanNFTTransactions.filter((tx) => tx.hash == item.hash);
             if (dataMatch.length == 0) continue;
+            const type = mnemonicNftTransfer?.labels.includes('LABEL_TRANSFER') || mnemonicNftTransfer == undefined ? tx_type.TRANSFER : tx_type.UNKNOWN_PURCHASE;
             for (const data of dataMatch) {
+                const gas = type == tx_type.TRANSFER ? 0 : (Number(data?.gasUsed) * Number(data?.gasPrice) / dataMatch.length);
                 purchases.push({
-                    type: tx_type.TRANSFER,
+                    type: type,
                     tx_hash: item.hash,
                     block: item.blockNumber.toString(),
                     date: new Date(Number(item.timeStamp) * 1000),
-                    gas: (Number(data?.gasUsed) * Number(data?.gasPrice) / dataMatch.length),
+                    gas: gas,
                     value: mnemonicNftTransfer != undefined ? ethToWei(Number(mnemonicNftTransfer?.recipientPaid.totalEth)) : 0,
                     collection_contract: data.contractAddress,
                     token_id: data.tokenID,
@@ -246,16 +248,16 @@ export function parse_transactions(data: [EtherscanResult[], EtherscanResult[], 
         }
     };
 
-    // let testMatch:any = etherscanNFTTransactions.filter((item) => item.hash.toLowerCase() == ("0xe7a8a3f7d0639d4b367f669a419f42d604138c0b24133a59e2b2b751d097e41c".toLowerCase()));
+    // let testMatch:any = etherscanNFTTransactions.filter((item) => item.hash.toLowerCase() == ("0x6a8edd075851d6a259744353433058de02260c979c080dd92ca432e5b90291b3".toLowerCase()));
     // if(testMatch.length > 0) console.log("etherscannft test", testMatch);
 
-    // testMatch = etherscanNormalTransactions.filter((item) => item.hash.toLowerCase() == ("0xe7a8a3f7d0639d4b367f669a419f42d604138c0b24133a59e2b2b751d097e41c".toLowerCase()));
+    // testMatch = etherscanNormalTransactions.filter((item) => item.hash.toLowerCase() == ("0x6a8edd075851d6a259744353433058de02260c979c080dd92ca432e5b90291b3".toLowerCase()));
     // if(testMatch.length > 0) console.log("etherscannormal test", testMatch);
 
-    // testMatch = alchemyPurchases.filter((item) => item.transactionHash.toLowerCase() == ("0xe7a8a3f7d0639d4b367f669a419f42d604138c0b24133a59e2b2b751d097e41c".toLowerCase()));
+    // let testMatch = alchemyPurchases.filter((item) => item.transactionHash.toLowerCase() == ("0x6a8edd075851d6a259744353433058de02260c979c080dd92ca432e5b90291b3".toLowerCase()));
     // if(testMatch.length > 0) console.log("alchemySales test", testMatch);
 
-    // testMatch = mnemonicNftTransfers.filter((item) => item.blockchainEvent.txHash == ("0xe7a8a3f7d0639d4b367f669a419f42d604138c0b24133a59e2b2b751d097e41c".toLowerCase()));
+    // testMatch = mnemonicNftTransfers.filter((item) => item.blockchainEvent.txHash == ("0x6a8edd075851d6a259744353433058de02260c979c080dd92ca432e5b90291b3".toLowerCase()));
     // if(testMatch.length > 0) console.log("mnemonicsNFT test", testMatch);
 
     return { purchases, sales, other };

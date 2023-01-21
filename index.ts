@@ -142,7 +142,7 @@ const handleRequest = async (payload: any, ack: any) => {
     });
 
     // mappedTrades.forEach((trade: Trade) => {
-    //   if(trade.purchaseTransaction.toLowerCase() == "0xe7a8a3f7d0639d4b367f669a419f42d604138c0b24133a59e2b2b751d097e41c".toLowerCase()){
+    //   if(trade.purchaseTransaction.toLowerCase() == "0x6a8edd075851d6a259744353433058de02260c979c080dd92ca432e5b90291b3".toLowerCase()){
     //     console.log(trade);
     //   }
     // });
